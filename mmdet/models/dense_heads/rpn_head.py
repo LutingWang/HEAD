@@ -214,6 +214,16 @@ class RPNHead(AnchorHead):
         scores = torch.cat(mlvl_scores)
         anchors = torch.cat(mlvl_valid_anchors)
         rpn_bbox_pred = torch.cat(mlvl_bboxes)
+        if getattr(self.prior_generator, 'with_pos', False):
+            from mmdet.core import DistancePointBBoxCoder
+            if isinstance(self.bbox_coder, DistancePointBBoxCoder):
+                poses = anchors[:, 2:]
+                anchors = anchors[:, :2]
+            else:
+                poses = anchors[:, 4:]
+                anchors = anchors[:, :4]
+        else:
+            poses = None
         proposals = self.bbox_coder.decode(
             anchors, rpn_bbox_pred, max_shape=img_shape)
         ids = torch.cat(level_ids)
@@ -226,11 +236,15 @@ class RPNHead(AnchorHead):
                 proposals = proposals[valid_mask]
                 scores = scores[valid_mask]
                 ids = ids[valid_mask]
+                if poses is not None:
+                    poses = poses[valid_mask]
 
         if proposals.numel() > 0:
-            dets, _ = batched_nms(proposals, scores, ids, cfg.nms)
+            dets, keep = batched_nms(proposals, scores, ids, cfg.nms)
+            if poses is not None:
+                dets = torch.cat([dets, poses[keep]], dim=-1)
         else:
-            return proposals.new_zeros(0, 5)
+            return proposals.new_zeros(0, 9)
 
         return dets[:cfg.max_per_img]
 

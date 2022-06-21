@@ -23,12 +23,20 @@ class SamplingResult(util_mixins.NiceRepr):
         })>
     """
 
-    def __init__(self, pos_inds, neg_inds, bboxes, gt_bboxes, assign_result,
-                 gt_flags):
+    def __init__(self,
+                 pos_inds,
+                 neg_inds,
+                 bboxes,
+                 gt_bboxes,
+                 assign_result,
+                 gt_flags,
+                 bbox_ids=None):
         self.pos_inds = pos_inds
         self.neg_inds = neg_inds
         self.pos_bboxes = bboxes[pos_inds]
         self.neg_bboxes = bboxes[neg_inds]
+        self.pos_bbox_ids = None if bbox_ids is None else bbox_ids[pos_inds]
+        self.neg_bbox_ids = None if bbox_ids is None else bbox_ids[neg_inds]
         self.pos_is_gt = gt_flags[pos_inds]
 
         self.num_gts = gt_bboxes.shape[0]
@@ -53,6 +61,12 @@ class SamplingResult(util_mixins.NiceRepr):
     def bboxes(self):
         """torch.Tensor: concatenated positive and negative boxes"""
         return torch.cat([self.pos_bboxes, self.neg_bboxes])
+
+    @property
+    def bbox_ids(self):
+        if self.pos_bbox_ids is None and self.neg_bbox_ids is None:
+            return None
+        return torch.cat([self.pos_bbox_ids, self.neg_bbox_ids])
 
     def to(self, device):
         """Change the device of the data inplace.

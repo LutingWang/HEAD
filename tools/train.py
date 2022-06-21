@@ -3,6 +3,7 @@ import argparse
 import copy
 import os
 import os.path as osp
+import sys; sys.path.insert(0, '')
 import time
 import warnings
 
@@ -16,7 +17,7 @@ from mmdet import __version__
 from mmdet.apis import init_random_seed, set_random_seed, train_detector
 from mmdet.datasets import build_dataset
 from mmdet.models import build_detector
-from mmdet.utils import collect_env, get_root_logger
+from mmdet.utils import collect_env, get_root_logger, odps_init, debug_init
 
 
 def parse_args():
@@ -73,6 +74,8 @@ def parse_args():
         default='none',
         help='job launcher')
     parser.add_argument('--local_rank', type=int, default=0)
+    parser.add_argument('--no-log-file', action='store_true')
+    parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
     if 'LOCAL_RANK' not in os.environ:
         os.environ['LOCAL_RANK'] = str(args.local_rank)
@@ -94,6 +97,9 @@ def main():
     cfg = Config.fromfile(args.config)
     if args.cfg_options is not None:
         cfg.merge_from_dict(args.cfg_options)
+
+    debug_init(args.debug, cfg)
+
     # set cudnn_benchmark
     if cfg.get('cudnn_benchmark', False):
         torch.backends.cudnn.benchmark = True
@@ -136,7 +142,7 @@ def main():
     cfg.dump(osp.join(cfg.work_dir, osp.basename(args.config)))
     # init the logger before other steps
     timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
-    log_file = osp.join(cfg.work_dir, f'{timestamp}.log')
+    log_file = None if args.no_log_file else osp.join(cfg.work_dir, f'{timestamp}.log')
     logger = get_root_logger(log_file=log_file, log_level=cfg.log_level)
 
     # init the meta dict to record some important information such as
@@ -193,4 +199,5 @@ def main():
 
 
 if __name__ == '__main__':
+    odps_init()
     main()

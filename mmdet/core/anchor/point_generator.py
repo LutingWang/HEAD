@@ -55,6 +55,7 @@ class MlvlPointGenerator:
     def __init__(self, strides, offset=0.5):
         self.strides = [_pair(stride) for stride in strides]
         self.offset = offset
+        self.with_pos = False
 
     @property
     def num_levels(self):
@@ -172,6 +173,13 @@ class MlvlPointGenerator:
             shifts = torch.stack([shift_xx, shift_yy, stride_w, stride_h],
                                  dim=-1)
         all_points = shifts.to(device)
+        if self.with_pos:
+            all_pos = all_points.new_zeros((all_points.shape[0], 4))
+            all_pos[..., 0] = level_idx
+            all_pos[..., 1] = shift_yy // stride_h
+            all_pos[..., 2] = shift_xx // stride_w
+            all_pos[..., 3] = 0
+            all_points = torch.cat((all_points, all_pos), dim=-1)
         return all_points
 
     def valid_flags(self, featmap_sizes, pad_shape, device='cuda'):

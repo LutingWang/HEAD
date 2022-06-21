@@ -111,6 +111,7 @@ class AnchorGenerator:
         self.centers = centers
         self.center_offset = center_offset
         self.base_anchors = self.gen_base_anchors()
+        self.with_pos = False
 
     @property
     def num_base_anchors(self):
@@ -275,7 +276,18 @@ class AnchorGenerator:
         # shifted anchors (K, A, 4), reshape to (K*A, 4)
 
         all_anchors = base_anchors[None, :, :] + shifts[:, None, :]
-        all_anchors = all_anchors.view(-1, 4)
+        if self.with_pos:
+            all_pos = torch.zeros_like(all_anchors)
+            all_pos[..., 0] = level_idx
+            all_pos[..., 1] = shift_yy[:, None] // stride_h
+            all_pos[..., 2] = shift_xx[:, None] // stride_w
+            assert all_pos.shape[1] == self.num_base_anchors[level_idx]
+            for i in range(self.num_base_anchors[level_idx]):
+                all_pos[:, i, 3] = i
+            all_anchors = torch.cat((all_anchors, all_pos), dim=-1)
+            all_anchors = all_anchors.view(-1, 8)
+        else:
+            all_anchors = all_anchors.view(-1, 4)
         # first A rows correspond to A anchors of (0, 0) in feature map,
         # then (0, 1), (0, 2), ...
         return all_anchors

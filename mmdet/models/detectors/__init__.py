@@ -15,6 +15,9 @@ from .fsaf import FSAF
 from .gfl import GFL
 from .grid_rcnn import GridRCNN
 from .htc import HybridTaskCascade
+from .kd import (HEAD, TB_HEAD, CustomAdapt, MultiHeadSingleStageDetector,
+                 MultiHeadTwoStageDetector, SingleTeacherSingleStageDetector,
+                 LabelEnc, TB_HEADSingleStage)
 from .kd_one_stage import KnowledgeDistillationSingleStageDetector
 from .lad import LAD
 from .mask_rcnn import MaskRCNN
@@ -49,5 +52,8 @@ __all__ = [
     'NASFCOS', 'PointRend', 'GFL', 'CornerNet', 'PAA', 'YOLOV3', 'YOLACT',
     'VFNet', 'DETR', 'TridentFasterRCNN', 'SparseRCNN', 'SCNet', 'SOLO',
     'DeformableDETR', 'AutoAssign', 'YOLOF', 'CenterNet', 'YOLOX',
-    'TwoStagePanopticSegmentor', 'PanopticFPN', 'QueryInst', 'LAD', 'TOOD'
+    'TwoStagePanopticSegmentor', 'PanopticFPN', 'QueryInst', 'LAD', 'TOOD',
+    'CustomAdapt', 'HEAD', 'TB_HEAD', 'SingleTeacherSingleStageDetector',
+    'MultiHeadSingleStageDetector', 'MultiHeadTwoStageDetector', 'LabelEnc',
+    'TB_HEADSingleStage'
 ]

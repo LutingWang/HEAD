@@ -1,0 +1,66 @@
+_base_ = [
+    'retina_fcos_r18.py',
+]
+
+model = dict(
+    type='SelfSingleStageDetector',
+    warmup=dict(
+        warmup=dict(
+            type='WarmupScheduler',
+            tensor_names=[
+                'loss_cls_fcos',
+                'loss_bbox_fcos',
+                'loss_centerness_fcos',
+            ],
+            iter_=2000,
+            value=1.0,
+        )),
+    distiller=dict(
+        student_hooks=dict(
+            retina_cls=dict(
+                type='MultiCallsHook',
+                path='bbox_head.cls_convs[-1]',
+            ),
+            fcos_cls=dict(
+                type='MultiCallsHook',
+                path='bbox_head._extra_heads["fcos"].cls_convs[-1]',
+            ),
+        ),
+        adapts={
+            'retina_cls_adapted':
+            dict(
+                type='Conv2d',
+                tensor_names=['retina_cls'],
+                multilevel=True,
+                in_channels=256,
+                out_channels=256,
+                kernel_size=1,
+            ),
+            'fcos_cls_detached':
+            dict(
+                type='Detach',
+                tensor_names=['fcos_cls'],
+                multilevel=True,
+            ),
+        },
+        losses=dict(
+            self_fcos=dict(
+                type='MSELoss',
+                tensor_names=['retina_cls_adapted', 'fcos_cls_detached'],
+                multilevel=True,
+                weight=1.0,
+            )),
+        schedulers=dict(
+            warmup=dict(
+                type='WarmupScheduler',
+                tensor_names=['loss_self_fcos'],
+                iter_=2000,
+            ),
+            early_stop=dict(
+                type='EarlyStopScheduler',
+                tensor_names=['loss_self_fcos'],
+                iter_=7330 * 8,
+            ),
+        ),
+    ),
+)

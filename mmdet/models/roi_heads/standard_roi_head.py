@@ -59,6 +59,7 @@ class StandardRoIHead(BaseRoIHead, BBoxTestMixin, MaskTestMixin):
                       gt_labels,
                       gt_bboxes_ignore=None,
                       gt_masks=None,
+                      sampling_results=None,
                       **kwargs):
         """
         Args:
@@ -81,7 +82,7 @@ class StandardRoIHead(BaseRoIHead, BBoxTestMixin, MaskTestMixin):
             dict[str, Tensor]: a dictionary of loss components
         """
         # assign gts and sample proposals
-        if self.with_bbox or self.with_mask:
+        if sampling_results is None and (self.with_bbox or self.with_mask):
             num_imgs = len(img_metas)
             if gt_bboxes_ignore is None:
                 gt_bboxes_ignore = [None for _ in range(num_imgs)]

@@ -18,6 +18,7 @@ from .ga_retina_head import GARetinaHead
 from .ga_rpn_head import GARPNHead
 from .gfl_head import GFLHead
 from .guided_anchor_head import FeatureAdaption, GuidedAnchorHead
+from .kd_head import RetinaMultiHead, RetinaRPNHead
 from .lad_head import LADHead
 from .ld_head import LDHead
 from .nasfcos_head import NASFCOSHead
@@ -39,15 +40,51 @@ from .yolof_head import YOLOFHead
 from .yolox_head import YOLOXHead
 
 __all__ = [
-    'AnchorFreeHead', 'AnchorHead', 'GuidedAnchorHead', 'FeatureAdaption',
-    'RPNHead', 'GARPNHead', 'RetinaHead', 'RetinaSepBNHead', 'GARetinaHead',
-    'SSDHead', 'FCOSHead', 'RepPointsHead', 'FoveaHead',
-    'FreeAnchorRetinaHead', 'ATSSHead', 'FSAFHead', 'NASFCOSHead',
-    'PISARetinaHead', 'PISASSDHead', 'GFLHead', 'CornerHead', 'YOLACTHead',
-    'YOLACTSegmHead', 'YOLACTProtonet', 'YOLOV3Head', 'PAAHead',
-    'SABLRetinaHead', 'CentripetalHead', 'VFNetHead', 'StageCascadeRPNHead',
-    'CascadeRPNHead', 'EmbeddingRPNHead', 'LDHead', 'CascadeRPNHead',
-    'AutoAssignHead', 'DETRHead', 'YOLOFHead', 'DeformableDETRHead',
-    'SOLOHead', 'DecoupledSOLOHead', 'CenterNetHead', 'YOLOXHead',
-    'DecoupledSOLOLightHead', 'LADHead', 'TOODHead'
+    'AnchorFreeHead',
+    'AnchorHead',
+    'GuidedAnchorHead',
+    'FeatureAdaption',
+    'RPNHead',
+    'GARPNHead',
+    'RetinaHead',
+    'RetinaSepBNHead',
+    'GARetinaHead',
+    'SSDHead',
+    'FCOSHead',
+    'RepPointsHead',
+    'FoveaHead',
+    'FreeAnchorRetinaHead',
+    'ATSSHead',
+    'FSAFHead',
+    'NASFCOSHead',
+    'PISARetinaHead',
+    'PISASSDHead',
+    'GFLHead',
+    'CornerHead',
+    'YOLACTHead',
+    'YOLACTSegmHead',
+    'YOLACTProtonet',
+    'YOLOV3Head',
+    'PAAHead',
+    'SABLRetinaHead',
+    'CentripetalHead',
+    'VFNetHead',
+    'StageCascadeRPNHead',
+    'CascadeRPNHead',
+    'EmbeddingRPNHead',
+    'LDHead',
+    'CascadeRPNHead',
+    'AutoAssignHead',
+    'DETRHead',
+    'YOLOFHead',
+    'DeformableDETRHead',
+    'SOLOHead',
+    'DecoupledSOLOHead',
+    'CenterNetHead',
+    'YOLOXHead',
+    'DecoupledSOLOLightHead',
+    'LADHead',
+    'TOODHead',
+    'RetinaMultiHead',
+    'RetinaRPNHead',
 ]

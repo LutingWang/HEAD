@@ -3,6 +3,7 @@ import random
 import warnings
 
 import numpy as np
+import todd
 import torch
 import torch.distributed as dist
 from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
@@ -121,7 +122,7 @@ def train_detector(model,
             find_unused_parameters=find_unused_parameters)
     else:
         model = MMDataParallel(
-            model.cuda(cfg.gpu_ids[0]), device_ids=cfg.gpu_ids)
+            model, device_ids=cfg.gpu_ids)
 
     # build runner
     optimizer = build_optimizer(model, cfg.optimizer)
@@ -204,6 +205,7 @@ def train_detector(model,
 
     if cfg.resume_from:
         runner.resume(cfg.resume_from)
+        todd.utils.init_iter(runner.iter)
     elif cfg.load_from:
         runner.load_checkpoint(cfg.load_from)
     runner.run(data_loaders, cfg.workflow)

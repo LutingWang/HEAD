@@ -37,6 +37,7 @@ class BaseSampler(metaclass=ABCMeta):
                bboxes,
                gt_bboxes,
                gt_labels=None,
+               bbox_ids=None,
                **kwargs):
         """Sample positive and negative bboxes.
 
@@ -75,6 +76,10 @@ class BaseSampler(metaclass=ABCMeta):
             if gt_labels is None:
                 raise ValueError(
                     'gt_labels must be given when add_gt_as_proposals is True')
+            if bbox_ids is not None:
+                gt_bbox_ids = torch.zeros_like(gt_bboxes) - 1
+                torch.arange(gt_bboxes.shape[0], out=gt_bbox_ids[:, -1])
+                bbox_ids = torch.cat([gt_bbox_ids, bbox_ids], dim=0)
             bboxes = torch.cat([gt_bboxes, bboxes], dim=0)
             assign_result.add_gt_(gt_labels)
             gt_ones = bboxes.new_ones(gt_bboxes.shape[0], dtype=torch.uint8)
@@ -98,5 +103,5 @@ class BaseSampler(metaclass=ABCMeta):
         neg_inds = neg_inds.unique()
 
         sampling_result = SamplingResult(pos_inds, neg_inds, bboxes, gt_bboxes,
-                                         assign_result, gt_flags)
+                                         assign_result, gt_flags, bbox_ids)
         return sampling_result
