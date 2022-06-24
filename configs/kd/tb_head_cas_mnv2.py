@@ -72,7 +72,7 @@ model = dict(
             # 'rcnn_bbox_adapted':
             # dict(
             #     type='Linear',
-            #     tensor_names=['rcnn_bbox'],
+            #     fields=['rcnn_bbox'],
             #     in_features=1024,
             #     out_features=1024,
             #     bias=False,
@@ -80,88 +80,88 @@ model = dict(
             'rcnn_bbox_aux0_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox_aux0'],
+                fields=['rcnn_bbox_aux0'],
                 in_features=1024,
                 out_features=1024,
             ),
             'rcnn_bbox0_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox0'],
+                fields=['rcnn_bbox0'],
                 in_features=1024,
                 out_features=1024,
             ),
             'rcnn_bbox_aux1_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox_aux1'],
+                fields=['rcnn_bbox_aux1'],
                 in_features=1024,
                 out_features=1024,
             ),
             'rcnn_bbox1_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox1'],
+                fields=['rcnn_bbox1'],
                 in_features=1024,
                 out_features=1024,
             ),
             'rcnn_bbox_aux2_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox_aux2'],
+                fields=['rcnn_bbox_aux2'],
                 in_features=1024,
                 out_features=1024,
             ),
             'rcnn_bbox2_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox2'],
+                fields=['rcnn_bbox2'],
                 in_features=1024,
                 out_features=1024,
             ),
         },
         losses=dict(
-            # cross=dict(
+            # loss_cross=dict(
             #     type='MSELoss',
-            #     tensor_names=['rcnn_bbox_adapted', 'teacher_rcnn_bbox0'],
+            #     fields=['rcnn_bbox_adapted', 'teacher_rcnn_bbox0'],
             #     weight=2.0,
             # ),
-            mimic_rcnn_aux0=dict(
+            loss_mimic_rcnn_aux0=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox_aux0_adapted', 'teacher_rcnn_bbox_aux0'],
+                fields=['rcnn_bbox_aux0_adapted', 'teacher_rcnn_bbox_aux0'],
                 weight=1.0,
             ),
-            mimic_rcnn0=dict(
+            loss_mimic_rcnn0=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox0_adapted', 'teacher_rcnn_bbox0'],
+                fields=['rcnn_bbox0_adapted', 'teacher_rcnn_bbox0'],
                 weight=1.0,
             ),
-            mimic_rcnn_aux1=dict(
+            loss_mimic_rcnn_aux1=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox_aux1_adapted', 'teacher_rcnn_bbox_aux1'],
+                fields=['rcnn_bbox_aux1_adapted', 'teacher_rcnn_bbox_aux1'],
                 weight=1.0,
             ),
-            mimic_rcnn1=dict(
+            loss_mimic_rcnn1=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox1_adapted', 'teacher_rcnn_bbox1'],
+                fields=['rcnn_bbox1_adapted', 'teacher_rcnn_bbox1'],
                 weight=1.0,
             ),
-            mimic_rcnn_aux2=dict(
+            loss_mimic_rcnn_aux2=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox_aux2_adapted', 'teacher_rcnn_bbox_aux2'],
+                fields=['rcnn_bbox_aux2_adapted', 'teacher_rcnn_bbox_aux2'],
                 weight=1.0,
             ),
-            mimic_rcnn2=dict(
+            loss_mimic_rcnn2=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox2_adapted', 'teacher_rcnn_bbox2'],
+                fields=['rcnn_bbox2_adapted', 'teacher_rcnn_bbox2'],
                 weight=1.0,
             ),
         ),
         schedulers=dict(
             warmup=dict(
                 type='WarmupScheduler',
-                tensor_names=[
-                    # 'loss_cross', 
+                fields=[
+                    # 'loss_cross',
                     'loss_mimic_rcnn0', 'loss_mimic_rcnn_aux0',
                     'loss_mimic_rcnn1', 'loss_mimic_rcnn_aux1',
                     'loss_mimic_rcnn2', 'loss_mimic_rcnn_aux2',

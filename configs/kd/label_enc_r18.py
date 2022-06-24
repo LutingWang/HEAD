@@ -12,9 +12,9 @@ model = dict(
             ),
         ),
         losses=dict(
-            label_enc=dict(
+            loss_label_enc=dict(
                 type='LabelEncLoss',
-                tensor_names=['neck', 'label_neck'],
+                fields=['neck', 'label_neck'],
                 num_channels=256,
             ),
         ),

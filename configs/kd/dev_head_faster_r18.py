@@ -7,7 +7,7 @@ model = dict(
     warmup=dict(
         warmup=dict(
             type='WarmupScheduler',
-            tensor_names=[
+            fields=[
                 'loss_cls',
                 'loss_bbox',
             ],
@@ -31,37 +31,37 @@ model = dict(
             'retina_cls_reshaped':
             dict(
                 type='Rearrange',
-                tensor_names=['retina_cls'],
-                multilevel=True,
+                fields=['retina_cls'],
+                parallel=True,
                 pattern='bs dim h w -> bs h w dim',
             ),
             'rcnn_bbox_detached':
             dict(
                 type='Detach',
-                tensor_names=['rcnn_bbox'],
+                fields=['rcnn_bbox'],
             ),
             ('rcnn_bbox_filtered', 'bbox_poses', 'anchor_ids'):
             dict(
                 type='CustomAdapt',
-                tensor_names=['rcnn_bbox_detached', 'bbox_ids'],
+                fields=['rcnn_bbox_detached', 'bbox_ids'],
                 stride=1,
             ),
         },
         losses=dict(
-            self_rcnn=dict(
+            loss_self_rcnn=dict(
                 type='DevRCNNLoss',
-                tensor_names=['retina_cls_reshaped', 'rcnn_bbox_filtered', 'bbox_poses'],
+                fields=['retina_cls_reshaped', 'rcnn_bbox_filtered', 'bbox_poses'],
                 weight=2.5,
             )),
         schedulers=dict(
             warmup=dict(
                 type='WarmupScheduler',
-                tensor_names=['loss_self_rcnn'],
+                fields=['loss_self_rcnn'],
                 iter_=2000,
             ),
             early_stop=dict(
                 type='EarlyStopScheduler',
-                tensor_names=['loss_self_rcnn'],
+                fields=['loss_self_rcnn'],
                 iter_=7330 * 8,
             ),
         ),

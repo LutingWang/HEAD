@@ -7,7 +7,7 @@ model = dict(
     warmup=dict(
         warmup=dict(
             type='WarmupScheduler',
-            tensor_names=[
+            fields=[
                 'loss_cls',
                 'loss_bbox',
             ],
@@ -56,25 +56,25 @@ model = dict(
             'cls_reshaped':
             dict(
                 type='Rearrange',
-                tensor_names=['cls'],
-                multilevel=True,
+                fields=['cls'],
+                parallel=True,
                 pattern='bs dim h w -> bs h w dim',
             ),
             ('teacher_rcnn_bbox_filtered', 'bbox_poses', 'anchor_ids'):
             dict(
                 type='CustomAdapt',
-                tensor_names=['teacher_rcnn_bbox', 'bbox_ids'],
+                fields=['teacher_rcnn_bbox', 'bbox_ids'],
                 stride=1,
             ),
             'cls_indexed':
             dict(
                 type='Index',
-                tensor_names=['cls_reshaped', 'bbox_poses'],
+                fields=['cls_reshaped', 'bbox_poses'],
             ),
             'cls_decoupled':
             dict(
                 type='Decouple',
-                tensor_names=['cls_indexed', 'anchor_ids'],
+                fields=['cls_indexed', 'anchor_ids'],
                 num=9,
                 in_features=256,
                 out_features=1024,
@@ -83,14 +83,14 @@ model = dict(
             'roi_feats':
             dict(
                 type='RoIAlign',
-                tensor_names=['neck', 'bboxes'],
+                fields=['neck', 'bboxes'],
                 strides=[8, 16, 32, 64, 128],
             ),
             'roi_feats_adapted':
             dict(
                 type='Conv2d',
-                tensor_names=['roi_feats'],
-                multilevel=True,
+                fields=['roi_feats'],
+                parallel=True,
                 in_channels=256,
                 out_channels=256,
                 kernel_size=1,
@@ -98,46 +98,46 @@ model = dict(
             'rcnn_bbox_aux_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox_aux'],
+                fields=['rcnn_bbox_aux'],
                 in_features=1024,
                 out_features=1024,
             ),
             'rcnn_bbox_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox'],
+                fields=['rcnn_bbox'],
                 in_features=1024,
                 out_features=1024,
             ),
         },
         losses=dict(
-            ckd=dict(
+            loss_ckd=dict(
                 type='CKDLoss',
-                tensor_names=[
+                fields=[
                     'cls_decoupled', 'teacher_rcnn_bbox_filtered',
                 ],
                 weight=0.5,
             ),
-            sgfi=dict(
+            loss_sgfi=dict(
                 type='SGFILoss',
-                tensor_names=['roi_feats_adapted', 'teacher_roi_feats'],
+                fields=['roi_feats_adapted', 'teacher_roi_feats'],
                 weight=1.0,
             ),
-            mimic_rcnn_aux=dict(
+            loss_mimic_rcnn_aux=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox_aux_adapted', 'teacher_rcnn_bbox_aux'],
+                fields=['rcnn_bbox_aux_adapted', 'teacher_rcnn_bbox_aux'],
                 weight=2.0,
             ),
-            mimic_rcnn=dict(
+            loss_mimic_rcnn=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox_adapted', 'teacher_rcnn_bbox'],
+                fields=['rcnn_bbox_adapted', 'teacher_rcnn_bbox'],
                 weight=2.0,
             ),
         ),
         schedulers=dict(
             warmup=dict(
                 type='WarmupScheduler',
-                tensor_names=[
+                fields=[
                     'loss_mimic_rcnn', 'loss_mimic_rcnn_aux',
                 ],
                 iter_=2000,

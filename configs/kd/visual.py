@@ -10,8 +10,8 @@ model = dict(
         visuals=dict(
             act=dict(
                 type='ActivationVisual',
-                tensor_names=['images', 'neck'],
-                multilevel=True,
+                fields=['images', 'neck'],
+                parallel=True,
                 log_dir='work_dirs/visual/',
             ), ),
     ),

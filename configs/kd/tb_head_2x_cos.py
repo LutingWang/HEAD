@@ -22,9 +22,9 @@ model = dict(
         student_trackings=dict(
             feat_mask=dict(type='StandardHook', path='rpn_head.feat_mask'), ),
         losses=dict(
-            mimic_neck=dict(
+            loss_mimic_neck=dict(
                 type='DeFeatLoss',
-                tensor_names=['neck_adapted', 'teacher_neck', 'feat_mask'],
+                fields=['neck_adapted', 'teacher_neck', 'feat_mask'],
                 weight=1.0,
                 pos_share=0.1,
             ), ),

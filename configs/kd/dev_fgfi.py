@@ -10,6 +10,6 @@ model = dict(
         teacher_online=True,
         teacher_hooks=dict(teacher_neck=None),
         # adapts=dict(neck_adapted=dict(type='Null')),
-        losses=dict(feat=dict(type='MSELoss')),
+        losses=dict(loss_feat=dict(type='MSELoss')),
     ))
 find_unused_parameters = True

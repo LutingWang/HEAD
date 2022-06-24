@@ -17,25 +17,25 @@ model = dict(
         adapts=dict(
             neck=dict(
                 type='Conv2d',
-                tensor_names=['neck'],
-                multilevel=5,
+                fields=['neck'],
+                parallel=5,
                 in_channels=256,
                 out_channels=256,
                 kernel_size=1,
             ),
             masks=dict(
                 type='DeFeatMask',
-                tensor_names=['batch_input_shape', 'gt_bboxes'],
+                fields=['batch_input_shape', 'gt_bboxes'],
                 neg_gain=4,
                 strides=[8, 16, 32, 64, 128],
                 ceil_mode=True,
             ),
         ),
         losses=dict(
-            neck=dict(
+            loss_neck=dict(
                 type='MSELoss',
-                tensor_names=['neck', 'teacher_neck', 'masks'],
-                multilevel=True,
+                fields=['neck', 'teacher_neck', 'masks'],
+                parallel=True,
                 weight=1 / 256,
                 reduction='sum',
             )),

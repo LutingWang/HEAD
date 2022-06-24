@@ -19,86 +19,86 @@ model = dict(
         adapts=dict(
             attn_spatial=dict(
                 type='AbsMeanSpatialAttention',
-                tensor_names=['neck'],
-                multilevel=True,
+                fields=['neck'],
+                parallel=True,
                 temperature=0.5,
             ),
             teacher_attn_spatial=dict(
                 type='AbsMeanSpatialAttention',
-                tensor_names=['teacher_neck'],
-                multilevel=True,
+                fields=['teacher_neck'],
+                parallel=True,
                 temperature=0.5,
             ),
             attn_channel=dict(
                 type='AbsMeanChannelAttention',
-                tensor_names=['neck'],
-                multilevel=True,
+                fields=['neck'],
+                parallel=True,
                 temperature=0.5,
             ),
             teacher_attn_channel=dict(
                 type='AbsMeanChannelAttention',
-                tensor_names=['teacher_neck'],
-                multilevel=True,
+                fields=['teacher_neck'],
+                parallel=True,
                 temperature=0.5,
             ),
             masks=dict(
                 type='FGDMask',
-                tensor_names=['batch_input_shape', 'gt_bboxes'],
+                fields=['batch_input_shape', 'gt_bboxes'],
                 neg_gain=0.5,
                 strides=[8, 16, 32, 64, 128],
                 ceil_mode=True,
             ),
             global_=dict(
                 type='ContextBlock',
-                tensor_names=['neck'],
-                multilevel=5,
+                fields=['neck'],
+                parallel=5,
                 in_channels=256,
                 ratio=0.5,
             ),
             teacher_global=dict(
                 type='ContextBlock',
-                tensor_names=['teacher_neck'],
-                multilevel=5,
+                fields=['teacher_neck'],
+                parallel=5,
                 in_channels=256,
                 ratio=0.5,
             ),
         ),
         losses=dict(
-            feat=dict(
+            loss_feat=dict(
                 type='FGDLoss',
-                tensor_names=[
+                fields=[
                     'neck', 'teacher_neck', 'teacher_attn_spatial',
                     'teacher_attn_channel', 'masks'
                 ],
-                multilevel=True,
+                parallel=True,
                 weight=1e-4,
                 reduction='sum',
             ),
-            attn_spatial=dict(
+            loss_attn_spatial=dict(
                 type='L1Loss',
-                tensor_names=['attn_spatial', 'teacher_attn_spatial'],
-                multilevel=True,
+                fields=['attn_spatial', 'teacher_attn_spatial'],
+                parallel=True,
                 weight=2.5e-4,
                 reduction='sum',
             ),
-            attn_channel=dict(
+            loss_attn_channel=dict(
                 type='L1Loss',
-                tensor_names=['attn_channel', 'teacher_attn_channel'],
-                multilevel=True,
+                fields=['attn_channel', 'teacher_attn_channel'],
+                parallel=True,
                 weight=2.5e-4,
                 reduction='sum',
             ),
-            global_=dict(
+            loss_global_=dict(
                 type='MSELoss',
-                tensor_names=['global_', 'teacher_global'],
-                multilevel=True,
+                fields=['global_', 'teacher_global'],
+                parallel=True,
                 weight=1.0,
             ),
         ),
         schedulers=dict(
             warmup=dict(
                 type='WarmupScheduler',
-                tensor_names=[
+                fields=[
                     'loss_feat', 'loss_attn_spatial', 'loss_attn_channel',
                     'loss_global_'
                 ],

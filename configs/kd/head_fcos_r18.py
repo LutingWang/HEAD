@@ -7,7 +7,7 @@ model = dict(
     warmup=dict(
         warmup=dict(
             type='WarmupScheduler',
-            tensor_names=[
+            fields=[
                 'loss_cls_fcos',
                 'loss_bbox_fcos',
                 'loss_centerness_fcos',
@@ -30,8 +30,8 @@ model = dict(
             'retina_cls_adapted':
             dict(
                 type='Conv2d',
-                tensor_names=['retina_cls'],
-                multilevel=True,
+                fields=['retina_cls'],
+                parallel=True,
                 in_channels=256,
                 out_channels=256,
                 kernel_size=1,
@@ -39,26 +39,26 @@ model = dict(
             'fcos_cls_detached':
             dict(
                 type='Detach',
-                tensor_names=['fcos_cls'],
-                multilevel=True,
+                fields=['fcos_cls'],
+                parallel=True,
             ),
         },
         losses=dict(
-            self_fcos=dict(
+            loss_self_fcos=dict(
                 type='MSELoss',
-                tensor_names=['retina_cls_adapted', 'fcos_cls_detached'],
-                multilevel=True,
+                fields=['retina_cls_adapted', 'fcos_cls_detached'],
+                parallel=True,
                 weight=1.0,
             )),
         schedulers=dict(
             warmup=dict(
                 type='WarmupScheduler',
-                tensor_names=['loss_self_fcos'],
+                fields=['loss_self_fcos'],
                 iter_=2000,
             ),
             early_stop=dict(
                 type='EarlyStopScheduler',
-                tensor_names=['loss_self_fcos'],
+                fields=['loss_self_fcos'],
                 iter_=7330 * 8,
             ),
         ),

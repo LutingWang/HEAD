@@ -23,8 +23,8 @@ model = dict(
             'neck_adapted':
             dict(
                 type='Conv2d',
-                tensor_names=['neck'],
-                multilevel=True,
+                fields=['neck'],
+                parallel=True,
                 in_channels=256,
                 out_channels=256,
                 kernel_size=1,
@@ -32,7 +32,7 @@ model = dict(
             'masks':
             dict(
                 type='DeFeatMask',
-                tensor_names=['batch_input_shape', 'gt_bboxes'],
+                fields=['batch_input_shape', 'gt_bboxes'],
                 neg_gain=4,
                 strides=[8, 16, 32, 64, 128],
                 ceil_mode=True,
@@ -40,27 +40,27 @@ model = dict(
             'rcnn_bbox_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox'],
+                fields=['rcnn_bbox'],
                 in_features=1024,
                 out_features=1024,
             ),
         },
         losses=dict(
-            mimic_neck=dict(
+            loss_mimic_neck=dict(
                 type='MSELoss',
-                tensor_names=['neck_adapted', 'teacher_neck', 'masks'],
-                multilevel=True,
+                fields=['neck_adapted', 'teacher_neck', 'masks'],
+                parallel=True,
                 weight=1 / 320,
                 reduction='sum',
             ),
-            mimic_rcnn=dict(
+            loss_mimic_rcnn=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox_adapted', 'teacher_rcnn_bbox'],
+                fields=['rcnn_bbox_adapted', 'teacher_rcnn_bbox'],
                 weight=2.0,
             ),
         ),
         schedulers=dict(
-            warmup=dict(tensor_names=[
+            warmup=dict(fields=[
                 'loss_self_fcos', 'loss_self_rcnn', 'loss_mimic_neck',
                 'loss_mimic_rcnn'
             ])),

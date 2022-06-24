@@ -25,40 +25,40 @@ model = dict(
             'rcnn_bbox_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox'],
+                fields=['rcnn_bbox'],
                 in_features=1024,
                 out_features=1024,
             ),
             'roi_feats':
             dict(
                 type='RoIAlign',
-                tensor_names=['neck', 'bboxes'],
+                fields=['neck', 'bboxes'],
                 strides=[8, 16, 32, 64, 128],
             ),
             'roi_feats_adapted':
             dict(
                 type='Conv2d',
-                tensor_names=['roi_feats'],
-                multilevel=True,
+                fields=['roi_feats'],
+                parallel=True,
                 in_channels=256,
                 out_channels=256,
                 kernel_size=1,
             ),
         },
         losses=dict(
-            mimic_sgfi=dict(
+            loss_mimic_sgfi=dict(
                 type='SGFILoss',
-                tensor_names=['roi_feats_adapted', 'teacher_roi_feats'],
+                fields=['roi_feats_adapted', 'teacher_roi_feats'],
                 weight=1.0,
             ),
-            mimic_rcnn=dict(
+            loss_mimic_rcnn=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox_adapted', 'teacher_rcnn_bbox'],
+                fields=['rcnn_bbox_adapted', 'teacher_rcnn_bbox'],
                 weight=2.0,
             ),
         ),
         schedulers=dict(
-            warmup=dict(tensor_names=[
+            warmup=dict(fields=[
                 'loss_self_fcos', 'loss_self_rcnn', 'loss_mimic_rcnn',
             ])),
     ),

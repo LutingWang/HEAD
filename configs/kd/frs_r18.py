@@ -17,24 +17,24 @@ model = dict(
         adapts=dict(
             neck_adapted=dict(
                 type='Conv2d',
-                tensor_names=['neck'],
-                multilevel=True,
+                fields=['neck'],
+                parallel=True,
                 in_channels=256,
                 out_channels=256,
                 kernel_size=1,
             ),
             mask=dict(
                 type='FRSMask',
-                tensor_names=['teacher_cls'],
-                multilevel=True,
+                fields=['teacher_cls'],
+                parallel=True,
                 with_logits=True,
             ),
         ),
         losses=dict(
-            feat=dict(
+            loss_feat=dict(
                 type='MSE2DLoss',
-                tensor_names=['neck_adapted', 'teacher_neck', 'mask'],
-                multilevel=True,
+                fields=['neck_adapted', 'teacher_neck', 'mask'],
+                parallel=True,
                 weight=1.0,
             )),
     ))

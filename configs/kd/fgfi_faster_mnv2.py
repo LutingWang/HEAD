@@ -27,33 +27,33 @@ model = dict(
         adapts=dict(
             neck_adapted=dict(
                 type='Conv2d',
-                tensor_names=['neck'],
-                multilevel=5,
+                fields=['neck'],
+                parallel=5,
                 in_channels=256,
                 out_channels=256,
                 kernel_size=1,
             ),
             ious=dict(
                 type='IoU',
-                tensor_names=['anchors', 'gt_bboxes'],
+                fields=['anchors', 'gt_bboxes'],
             ),
             masks=dict(
                 type='FGFIMask',
-                tensor_names=['ious'],
+                fields=['ious'],
             ),
         ),
         losses=dict(
-            feat=dict(
+            loss_feat=dict(
                 type='FGFILoss',
-                tensor_names=['neck_adapted', 'teacher_neck', 'masks'],
-                multilevel=True,
+                fields=['neck_adapted', 'teacher_neck', 'masks'],
+                parallel=True,
                 weight=3.0,
             )),
         schedulers=dict(
             warmup=dict(
                 type='WarmupScheduler',
-                tensor_names=['loss_feat'],
+                fields=['loss_feat'],
                 iter_=2000,
-            ), 
+            ),
         ),
     ))

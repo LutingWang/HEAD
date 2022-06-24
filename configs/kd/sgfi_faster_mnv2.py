@@ -28,7 +28,7 @@ model = dict(
             # 'rcnn_bbox_adapted':
             # dict(
             #     type='Linear',
-            #     tensor_names=['rcnn_bbox'],
+            #     fields=['rcnn_bbox'],
             #     in_features=1024,
             #     out_features=1024,
             #     bias=False,
@@ -36,30 +36,30 @@ model = dict(
             'roi_feats':
             dict(
                 type='RoIAlign',
-                tensor_names=['neck', 'bboxes'],
+                fields=['neck', 'bboxes'],
                 strides=[4, 8, 16, 32, 64],
             ),
             'roi_feats_adapted':
             dict(
                 type='Conv2d',
-                tensor_names=['roi_feats'],
-                multilevel=True,
+                fields=['roi_feats'],
+                parallel=True,
                 in_channels=256,
                 out_channels=256,
                 kernel_size=1,
             ),
         },
         losses=dict(
-            # ckd=dict(
+            # loss_ckd=dict(
             #     type='CKDLoss',
-            #     tensor_names=[
+            #     fields=[
             #         'rcnn_bbox_adapted', 'teacher_rcnn_bbox', 'bboxes',
             #     ],
             #     weight=0.5,
             # ),
-            sgfi=dict(
+            loss_sgfi=dict(
                 type='SGFILoss',
-                tensor_names=['roi_feats_adapted', 'teacher_roi_feats'],
+                fields=['roi_feats_adapted', 'teacher_roi_feats'],
                 weight=1.0,
             ),
         ),

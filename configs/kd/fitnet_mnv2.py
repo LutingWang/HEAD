@@ -19,17 +19,17 @@ model = dict(
         adapts=dict(
             neck_adapted=dict(
                 type='Conv2d',
-                tensor_names=['neck'],
-                multilevel=5,
+                fields=['neck'],
+                parallel=5,
                 in_channels=256,
                 out_channels=256,
                 kernel_size=1,
             )),
         losses=dict(
-            feat=dict(
+            loss_feat=dict(
                 type='MSELoss',
-                tensor_names=['neck_adapted', 'teacher_neck'],
-                multilevel=True,
+                fields=['neck_adapted', 'teacher_neck'],
+                parallel=True,
                 weight=1.0,
             )),
     ))

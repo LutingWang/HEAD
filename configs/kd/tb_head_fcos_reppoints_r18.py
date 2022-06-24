@@ -7,7 +7,7 @@ model = dict(
     warmup=dict(
         warmup=dict(
             type='WarmupScheduler',
-            tensor_names=[
+            fields=[
                 'loss_cls_reppoints',
                 'loss_pts_init_reppoints',
                 'loss_pts_refine_reppoints',
@@ -79,49 +79,49 @@ model = dict(
         adapts={
             t: dict(
                 type='Conv2d',
-                tensor_names=[t],
-                multilevel=True,
-                in_channels=256, 
+                fields=[t],
+                parallel=True,
+                in_channels=256,
                 out_channels=256,
                 kernel_size=1,
             ) for t in [
-                # 'retina_cls', 'retina_reg', 
-                'rp_cls', 'rp_reg', 
+                # 'retina_cls', 'retina_reg',
+                'rp_cls', 'rp_reg',
                 'rp_pts_init_conv', 'rp_cls_conv', 'rp_pts_refine_conv',
             ]
         },
         losses=dict(
-            # cross_cls=dict(
+            # loss_cross_cls=dict(
             #     type='MSELoss',
-            #     tensor_names=['retina_cls', 'teacher_rp_cls'],
-            #     multilevel=True,
+            #     fields=['retina_cls', 'teacher_rp_cls'],
+            #     parallel=True,
             #     weight=1.0
             # ),
-            # cross_reg=dict(
+            # loss_cross_reg=dict(
             #     type='MSELoss',
-            #     tensor_names=['retina_reg', 'teacher_rp_reg'],
-            #     multilevel=True,
+            #     fields=['retina_reg', 'teacher_rp_reg'],
+            #     parallel=True,
             #     weight=1.0
             # ),
             **{
                 t: dict(
                     type='MSELoss',
-                    tensor_names=[t, 'teacher_' + t],
-                    multilevel=True,
+                    fields=[t, 'teacher_' + t],
+                    parallel=True,
                     weight=1.0,
                 ) for t in [
-                    'rp_cls', 'rp_reg', 
-                    'rp_pts_init_conv', 'rp_cls_conv', 'rp_pts_refine_conv',
+                    'loss_rp_cls', 'loss_rp_reg',
+                    'loss_rp_pts_init_conv', 'loss_rp_cls_conv', 'loss_rp_pts_refine_conv',
                 ]
             },
         ),
         schedulers=dict(
             warmup=dict(
                 type='WarmupScheduler',
-                tensor_names=[
+                fields=[
                     # 'loss_cross_cls', 'loss_cross_reg',
-                    'loss_rp_cls', 'loss_rp_reg', 
-                    'loss_rp_pts_init_conv', 'loss_rp_cls_conv', 
+                    'loss_rp_cls', 'loss_rp_reg',
+                    'loss_rp_pts_init_conv', 'loss_rp_cls_conv',
                     'loss_rp_pts_refine_conv',
                 ],
                 iter_=2000,

@@ -7,7 +7,7 @@ model = dict(
     warmup=dict(
         warmup=dict(
             type='WarmupScheduler',
-            tensor_names=[
+            fields=[
                 'loss_cls',
                 'loss_bbox',
             ],
@@ -50,25 +50,25 @@ model = dict(
             # 'retina_cls_reshaped':
             # dict(
             #     type='Rearrange',
-            #     tensor_names=['retina_cls'],
-            #     multilevel=True,
+            #     fields=['retina_cls'],
+            #     parallel=True,
             #     pattern='bs dim h w -> bs h w dim',
             # ),
             # ('teacher_rcnn_bbox_filtered', 'bbox_poses', 'anchor_ids'):
             # dict(
             #     type='CustomAdapt',
-            #     tensor_names=['teacher_rcnn_bbox', 'bbox_ids'],
+            #     fields=['teacher_rcnn_bbox', 'bbox_ids'],
             #     stride=1,
             # ),
             # 'retina_cls_indexed':
             # dict(
             #     type='Index',
-            #     tensor_names=['retina_cls_reshaped', 'bbox_poses'],
+            #     fields=['retina_cls_reshaped', 'bbox_poses'],
             # ),
             # 'retina_cls_decoupled':
             # dict(
             #     type='Decouple',
-            #     tensor_names=['retina_cls_indexed', 'anchor_ids'],
+            #     fields=['retina_cls_indexed', 'anchor_ids'],
             #     num=9,
             #     in_features=256,
             #     out_features=1024,
@@ -76,40 +76,40 @@ model = dict(
             'rcnn_bbox_aux_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox_aux'],
+                fields=['rcnn_bbox_aux'],
                 in_features=1024,
                 out_features=1024,
             ),
             'rcnn_bbox_adapted':
             dict(
                 type='Linear',
-                tensor_names=['rcnn_bbox'],
+                fields=['rcnn_bbox'],
                 in_features=1024,
                 out_features=1024,
             ),
         },
         losses=dict(
-            # cross=dict(
+            # loss_cross=dict(
             #     type='MSELoss',
-            #     tensor_names=['retina_cls_decoupled', 'teacher_rcnn_bbox_filtered'],
+            #     fields=['retina_cls_decoupled', 'teacher_rcnn_bbox_filtered'],
             #     weight=2.0,
             # ),
-            mimic_rcnn_aux=dict(
+            loss_mimic_rcnn_aux=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox_aux_adapted', 'teacher_rcnn_bbox_aux'],
+                fields=['rcnn_bbox_aux_adapted', 'teacher_rcnn_bbox_aux'],
                 weight=2.0,
             ),
-            mimic_rcnn=dict(
+            loss_mimic_rcnn=dict(
                 type='MSELoss',
-                tensor_names=['rcnn_bbox_adapted', 'teacher_rcnn_bbox'],
+                fields=['rcnn_bbox_adapted', 'teacher_rcnn_bbox'],
                 weight=2.0,
             ),
         ),
         schedulers=dict(
             warmup=dict(
                 type='WarmupScheduler',
-                tensor_names=[
-                    # 'loss_cross', 
+                fields=[
+                    # 'loss_cross',
                     'loss_mimic_rcnn', 'loss_mimic_rcnn_aux',
                 ],
                 iter_=2000,
