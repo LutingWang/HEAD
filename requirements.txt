@@ -1,0 +1,3 @@
+einops
+ipdb
+mmdet==2.20
