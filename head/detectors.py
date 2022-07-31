@@ -1,21 +1,20 @@
-from typing import Any, Dict, List, NoReturn, Optional, Tuple
+from typing import Any, Dict, List, NoReturn, Optional
 
 import einops
 import mmcv
-from head.roi_heads import StandardRoIHeadWithBBoxIDs
 import todd
 import torch
 
-from mmdet.core import (AssignResult, MaxIoUAssigner, SamplingResult,
-                     bbox2result, bbox2roi)
+from mmdet.core import bbox2result, bbox2roi
 from mmdet.models import BaseDetector
 from mmdet.models.builder import DETECTORS
-from mmdet.models.dense_heads.base_dense_head import BaseDenseHead
 from mmdet.models.roi_heads import StandardRoIHead
 from mmdet.models.detectors.two_stage import TwoStageDetector
 
-from .dense_heads import RPNHead, RPNMixin, RetinaRPNHead
-from .samplers import RandomSampler
+from todd.base.iters import inc_iter
+
+from .dense_heads import RPNMixin
+from .roi_heads import StandardRoIHeadWithBBoxIDs
 
 
 class CacheImgsMixin(BaseDetector):
@@ -166,7 +165,10 @@ class CrossStageHEAD(CacheImgsMixin, SchedulersMixin, CrossStageDetector):
             gt_bboxes=gt_bboxes,
             batch_input_shape=tuple(img[0].shape[-2:]),
         )
+        self.distiller.track_tensors()
         kd_losses = self.distiller.distill(custom_tensors)
+        self.distiller.reset()
+        inc_iter()
 
         return {**losses, **kd_losses}
 

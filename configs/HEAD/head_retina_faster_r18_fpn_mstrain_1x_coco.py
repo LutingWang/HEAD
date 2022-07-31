@@ -20,30 +20,30 @@ model = dict(
             ckpt='data/ckpts/faster_rcnn_r50_fpn_mstrain_3x_coco_20210524_110822-e10bd31c.pth',
         ),
         weight_transfer={
-            'student.roi_head': 'teacher.roi_head',
+            '.student.roi_head': '.teacher.roi_head',
         },
         student_hooks=dict(
             retina_cls=dict(
                 type='MultiCallsHook',
-                path='rpn_head.cls_convs[-1]',
+                path='.rpn_head.cls_convs[-1]',
             ),
             rcnn_bbox=dict(
                 type='StandardHook',
-                path='roi_head.bbox_head.shared_fcs[-1]',
+                path='.roi_head.bbox_head.shared_fcs[-1]',
             ),
             rcnn_bbox_aux=dict(
                 type='StandardHook',
-                path='roi_head.bbox_head.shared_fcs[0]',
+                path='.roi_head.bbox_head.shared_fcs[0]',
             ),
         ),
         teacher_hooks=dict(
             teacher_rcnn_bbox_aux=dict(
                 type='StandardHook',
-                path='roi_head.bbox_head.shared_fcs[0]',
+                path='.roi_head.bbox_head.shared_fcs[0]',
             ),
             teacher_rcnn_bbox=dict(
                 type='StandardHook',
-                path='roi_head.bbox_head.shared_fcs[-1]',
+                path='.roi_head.bbox_head.shared_fcs[-1]',
             ),
         ),
         adapts={
