@@ -1,0 +1,5 @@
+[flake8]
+ignore = E126,E201,E241,W503,W504
+per-file-ignores =
+    head/__init__.py:F401,F403
+    head/**/__init__.py:F401,F403

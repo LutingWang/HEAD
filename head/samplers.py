@@ -1,12 +1,9 @@
 from typing import Optional, Type, TypeVar, cast, overload
 
 import torch
-from mmdet.core.bbox import (
-    AssignResult,
-    BaseSampler,
-    SamplingResult,
-    RandomSampler as _RandomSampler,
-)
+from mmdet.core.bbox import AssignResult, BaseSampler
+from mmdet.core.bbox import RandomSampler as _RandomSampler
+from mmdet.core.bbox import SamplingResult
 from mmdet.core.bbox.builder import BBOX_SAMPLERS
 
 T = TypeVar('T')
@@ -18,7 +15,9 @@ class SamplingResultWithBBoxIDs(SamplingResult):
 
     @classmethod
     def cast(
-        cls: Type[T], sampling_result: SamplingResult, bbox_ids: torch.Tensor,
+        cls: Type[T],
+        sampling_result: SamplingResult,
+        bbox_ids: torch.Tensor,
     ) -> T:
         sampling_result.__class__ = cls
         sampling_result = cast(SamplingResultWithBBoxIDs, sampling_result)
@@ -76,12 +75,14 @@ class BBoxIDsMixin(BaseSampler):
             return sampling_result
         num_gts = sampling_result.num_gts
         gt_bbox_ids = bbox_ids.new_full(
-            (num_gts, bbox_ids.shape[1]), -1,
+            (num_gts, bbox_ids.shape[1]),
+            -1,
         )
         torch.arange(num_gts, out=gt_bbox_ids[:, -1])
         bbox_ids = torch.cat([gt_bbox_ids, bbox_ids], dim=0)
         return SamplingResultWithBBoxIDs.cast(
-            sampling_result, bbox_ids,
+            sampling_result,
+            bbox_ids,
         )
 
 

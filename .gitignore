@@ -128,7 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-data
-pretrained
+data/*
+!data/.gitkeep
+pretrained/*
+!pretrained/.gitkeep
 work_dirs/*
 !work_dirs/.gitkeep

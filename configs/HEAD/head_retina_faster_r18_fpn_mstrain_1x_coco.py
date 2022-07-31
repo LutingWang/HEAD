@@ -17,7 +17,11 @@ model = dict(
     distiller=dict(
         teacher=dict(
             config='configs/faster_rcnn/faster_rcnn_r50_fpn_1x_coco.py',
-            ckpt='data/ckpts/faster_rcnn_r50_fpn_mstrain_3x_coco_20210524_110822-e10bd31c.pth',
+            ckpt=(
+                'pretrained/mmdetection/'
+                'faster_rcnn_r50_fpn_mstrain_3x_coco_'
+                '20210524_110822-e10bd31c.pth'
+            ),
         ),
         weight_transfer={
             '.student.roi_head': '.teacher.roi_head',
@@ -47,41 +51,35 @@ model = dict(
             ),
         ),
         adapts={
-            'retina_cls_reshaped':
-            dict(
+            'retina_cls_reshaped': dict(
                 type='Rearrange',
                 fields=['retina_cls'],
                 parallel=True,
                 pattern='bs dim h w -> bs h w dim',
             ),
-            ('teacher_rcnn_bbox_filtered', 'bbox_poses', 'anchor_ids'):
-            dict(
+            ('teacher_rcnn_bbox_filtered', 'bbox_poses', 'anchor_ids'): dict(
                 type='CustomAdapt',
                 fields=['teacher_rcnn_bbox', 'bbox_ids'],
                 stride=1,
             ),
-            'retina_cls_indexed':
-            dict(
+            'retina_cls_indexed': dict(
                 type='Index',
                 fields=['retina_cls_reshaped', 'bbox_poses'],
             ),
-            'retina_cls_decoupled':
-            dict(
+            'retina_cls_decoupled': dict(
                 type='Decouple',
                 fields=['retina_cls_indexed', 'anchor_ids'],
                 num=9,
                 in_features=256,
                 out_features=1024,
             ),
-            'rcnn_bbox_aux_adapted':
-            dict(
+            'rcnn_bbox_aux_adapted': dict(
                 type='Linear',
                 fields=['rcnn_bbox_aux'],
                 in_features=1024,
                 out_features=1024,
             ),
-            'rcnn_bbox_adapted':
-            dict(
+            'rcnn_bbox_adapted': dict(
                 type='Linear',
                 fields=['rcnn_bbox'],
                 in_features=1024,

@@ -1,9 +1,10 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+import sys; sys.path.insert(0, '')  # noqa: E702, isort: skip, yapf: disable
+
 import argparse
 import copy
 import os
 import os.path as osp
-import sys; sys.path.insert(0, '')
 import time
 import warnings
 
@@ -12,7 +13,6 @@ import torch
 from mmcv import Config, DictAction
 from mmcv.runner import get_dist_info, init_dist
 from mmcv.utils import get_git_hash
-
 from mmdet import __version__
 from mmdet.apis import init_random_seed, set_random_seed
 from mmdet.datasets import build_dataset
@@ -20,7 +20,7 @@ from mmdet.models import build_detector
 from mmdet.utils import collect_env, get_root_logger
 
 from head.train import train_detector
-from head.utils import odps_init, debug_init
+from head.utils import debug_init, odps_init
 
 
 def parse_args():
@@ -28,32 +28,38 @@ def parse_args():
     parser.add_argument('config', help='train config file path')
     parser.add_argument('--work-dir', help='the dir to save logs and models')
     parser.add_argument(
-        '--resume-from', help='the checkpoint file to resume from')
+        '--resume-from', help='the checkpoint file to resume from'
+    )
     parser.add_argument(
         '--auto-resume',
         action='store_true',
-        help='resume from the latest checkpoint automatically')
+        help='resume from the latest checkpoint automatically'
+    )
     parser.add_argument(
         '--no-validate',
         action='store_true',
-        help='whether not to evaluate the checkpoint during training')
+        help='whether not to evaluate the checkpoint during training'
+    )
     group_gpus = parser.add_mutually_exclusive_group()
     group_gpus.add_argument(
         '--gpus',
         type=int,
         help='number of gpus to use '
-        '(only applicable to non-distributed training)')
+        '(only applicable to non-distributed training)'
+    )
     group_gpus.add_argument(
         '--gpu-ids',
         type=int,
         nargs='+',
         help='ids of gpus to use '
-        '(only applicable to non-distributed training)')
+        '(only applicable to non-distributed training)'
+    )
     parser.add_argument('--seed', type=int, default=None, help='random seed')
     parser.add_argument(
         '--deterministic',
         action='store_true',
-        help='whether to set deterministic options for CUDNN backend.')
+        help='whether to set deterministic options for CUDNN backend.'
+    )
     parser.add_argument(
         '--cfg-options',
         nargs='+',
@@ -63,12 +69,14 @@ def parse_args():
         'be overwritten is a list, it should be like key="[a,b]" or key=a,b '
         'It also allows nested list/tuple values, e.g. key="[(a,b),(c,d)]" '
         'Note that the quotation marks are necessary and that no white space '
-        'is allowed.')
+        'is allowed.'
+    )
     parser.add_argument(
         '--launcher',
         choices=['none', 'pytorch', 'slurm', 'mpi'],
         default='none',
-        help='job launcher')
+        help='job launcher'
+    )
     parser.add_argument('--local_rank', type=int, default=0)
     parser.add_argument('--no-log-file', action='store_true')
     parser.add_argument('--debug', action='store_true')
@@ -98,8 +106,9 @@ def main():
         cfg.work_dir = args.work_dir
     elif cfg.get('work_dir', None) is None:
         # use config filename as default work_dir if cfg.work_dir is None
-        cfg.work_dir = osp.join('./work_dirs',
-                                osp.splitext(osp.basename(args.config))[0])
+        cfg.work_dir = osp.join(
+            './work_dirs', osp.splitext(osp.basename(args.config))[0]
+        )
     if args.resume_from is not None:
         cfg.resume_from = args.resume_from
     cfg.auto_resume = args.auto_resume
@@ -115,7 +124,8 @@ def main():
             warnings.warn(
                 f'We treat {cfg.gpu_ids} as gpu-ids, and reset to '
                 f'{cfg.gpu_ids[0:1]} as gpu-ids to avoid potential error in '
-                'non-distribute training time.')
+                'non-distribute training time.'
+            )
             cfg.gpu_ids = cfg.gpu_ids[0:1]
     else:
         distributed = True
@@ -130,7 +140,9 @@ def main():
     cfg.dump(osp.join(cfg.work_dir, osp.basename(args.config)))
     # init the logger before other steps
     timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
-    log_file = None if args.no_log_file else osp.join(cfg.work_dir, f'{timestamp}.log')
+    log_file = None if args.no_log_file else osp.join(
+        cfg.work_dir, f'{timestamp}.log'
+    )
     logger = get_root_logger(log_file=log_file, log_level=cfg.log_level)
 
     # init the meta dict to record some important information such as
@@ -140,8 +152,9 @@ def main():
     env_info_dict = collect_env()
     env_info = '\n'.join([(f'{k}: {v}') for k, v in env_info_dict.items()])
     dash_line = '-' * 60 + '\n'
-    logger.info('Environment info:\n' + dash_line + env_info + '\n' +
-                dash_line)
+    logger.info(
+        'Environment info:\n' + dash_line + env_info + '\n' + dash_line
+    )
     meta['env_info'] = env_info
     meta['config'] = cfg.pretty_text
     # log some basic info
@@ -150,8 +163,10 @@ def main():
 
     # set random seeds
     seed = init_random_seed(args.seed)
-    logger.info(f'Set random seed to {seed}, '
-                f'deterministic: {args.deterministic}')
+    logger.info(
+        f'Set random seed to {seed}, '
+        f'deterministic: {args.deterministic}'
+    )
     set_random_seed(seed, deterministic=args.deterministic)
     cfg.seed = seed
     meta['seed'] = seed
@@ -160,7 +175,8 @@ def main():
     model = build_detector(
         cfg.model,
         train_cfg=cfg.get('train_cfg'),
-        test_cfg=cfg.get('test_cfg'))
+        test_cfg=cfg.get('test_cfg')
+    )
     model.init_weights()
 
     datasets = [build_dataset(cfg.data.train)]
@@ -173,7 +189,8 @@ def main():
         # checkpoints as meta data
         cfg.checkpoint_config.meta = dict(
             mmdet_version=__version__ + get_git_hash()[:7],
-            CLASSES=datasets[0].CLASSES)
+            CLASSES=datasets[0].CLASSES
+        )
     # add an attribute for visualization convenience
     model.CLASSES = datasets[0].CLASSES
     train_detector(
@@ -183,7 +200,8 @@ def main():
         distributed=distributed,
         validate=(not args.no_validate),
         timestamp=timestamp,
-        meta=meta)
+        meta=meta
+    )
 
 
 if __name__ == '__main__':

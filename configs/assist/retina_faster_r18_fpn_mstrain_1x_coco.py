@@ -54,7 +54,8 @@ model = dict(
             allowed_border=-1,
             pos_weight=-1,
             debug=False,
-        )),
+        ),
+    ),
     test_cfg=dict(
         rpn=dict(
             _delete_=True,
@@ -63,5 +64,6 @@ model = dict(
             score_thr=0.05,
             nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100,
-        )),
+        ),
+    ),
 )

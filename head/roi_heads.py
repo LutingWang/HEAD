@@ -1,8 +1,9 @@
 from typing import Any, Dict, List, Optional
-from mmdet.core import BaseAssigner
-from mmdet.models.builder import HEADS
-from mmdet.models import StandardRoIHead
+
 import torch
+from mmdet.core import BaseAssigner
+from mmdet.models import StandardRoIHead
+from mmdet.models.builder import HEADS
 
 from .samplers import BBoxIDsMixin, SamplingResultWithBBoxIDs
 
@@ -24,7 +25,9 @@ class StandardRoIHeadWithBBoxIDs(StandardRoIHead):
         for i, (proposal, gt_bbox, gt_label, gt_bbox_ignore) in enumerate(
             zip(proposal_list, gt_bboxes, gt_labels, gt_bboxes_ignore),
         ):
-            feats = [lvl_feat[i][None] for lvl_feat in x]  # TODO: is this pythonic?
+            feats = [
+                lvl_feat[i][None] for lvl_feat in x
+            ]  # TODO: is this pythonic?
             proposal_id = proposal[:, 5:]
             proposal = proposal[:, :4]
             assign_result = self.bbox_assigner.assign(
@@ -45,7 +48,7 @@ class StandardRoIHeadWithBBoxIDs(StandardRoIHead):
 
         bboxes = [s.bboxes for s in sampling_results]
         bboxes_ids = torch.cat([s.bbox_ids for s in sampling_results])
-        bboxes_img_id = torch.cat([
+        bboxes_img_id = torch.cat([  # yapf: disable
             torch.full_like(s.bbox_ids[:, [0]], i)
             for i, s in enumerate(sampling_results)
         ])
@@ -73,22 +76,30 @@ class StandardRoIHeadWithBBoxIDs(StandardRoIHead):
 
         if self.with_bbox or self.with_mask:
             sampling_results = self._sample(
-                x, proposal_list, gt_bboxes, gt_labels, gt_bboxes_ignore,
+                x,
+                proposal_list,
+                gt_bboxes,
+                gt_labels,
+                gt_bboxes_ignore,
             )
 
         if self.with_bbox:
             bbox_results = self._bbox_forward_train(
-                x, sampling_results,
-                gt_bboxes, gt_labels,
+                x,
+                sampling_results,
+                gt_bboxes,
+                gt_labels,
                 img_metas,
             )
             losses.update(bbox_results['loss_bbox'])
 
         if self.with_mask:
             mask_results = self._mask_forward_train(
-                x, sampling_results,
+                x,
+                sampling_results,
                 bbox_results['bbox_feats'],
-                gt_masks, img_metas,
+                gt_masks,
+                img_metas,
             )
             losses.update(mask_results['loss_mask'])
 

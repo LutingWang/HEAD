@@ -7,5 +7,10 @@ _base_ = [
 
 model = dict(
     backbone=dict(
-        depth=18, init_cfg=dict(checkpoint='pretrained/torchvision/resnet18-5c106cde.pth')),
-    neck=dict(in_channels=[64, 128, 256, 512]))
+        depth=18,
+        init_cfg=dict(
+            checkpoint='pretrained/torchvision/resnet18-f37072fd.pth',
+        ),
+    ),
+    neck=dict(in_channels=[64, 128, 256, 512]),
+)

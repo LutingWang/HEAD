@@ -4,13 +4,11 @@ import einops
 import mmcv
 import todd
 import torch
-
 from mmdet.core import bbox2result, bbox2roi
 from mmdet.models import BaseDetector
 from mmdet.models.builder import DETECTORS
-from mmdet.models.roi_heads import StandardRoIHead
 from mmdet.models.detectors.two_stage import TwoStageDetector
-
+from mmdet.models.roi_heads import StandardRoIHead
 from todd.base.iters import inc_iter
 
 from .dense_heads import RPNMixin
@@ -26,14 +24,17 @@ class CacheImgsMixin(BaseDetector):
     def forward_train(
         self,
         img: torch.Tensor,
-        img_metas: List[dict],
-        *args,
+        img_metas: List[Dict[str, Any]],
+        gt_bboxes: torch.Tensor,
+        gt_labels: torch.Tensor,
+        gt_bboxes_ignore: Optional[torch.Tensor] = None,
+        gt_masks: Optional[torch.Tensor] = None,
         **kwargs,
     ) -> Dict[str, Any]:
         if self._cache_imgs:
             imgs = einops.rearrange(img, 'bs c h w -> bs h w c')
             imgs = imgs.detach().cpu().numpy()
-            self.imgs = [
+            self.imgs = [  # yapf: disable
                 mmcv.imdenormalize(
                     img,
                     mean=img_meta['img_norm_cfg']['mean'],
@@ -41,14 +42,27 @@ class CacheImgsMixin(BaseDetector):
                     to_bgr=img_meta['img_norm_cfg']['to_rgb'],
                 ) for img, img_meta in zip(imgs, img_metas)
             ]
-        return super().forward_train(img, img_metas, *args, **kwargs)
+        return super().forward_train(
+            img,
+            img_metas,
+            gt_bboxes,
+            gt_labels,
+            gt_bboxes_ignore,
+            gt_masks,
+            **kwargs,
+        )
 
 
 class SchedulersMixin(BaseDetector):
 
-    def __init__(self, *args, schedulers: Optional[dict] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *args,
+        schedulers: Optional[dict] = None,
+        **kwargs,
+    ) -> None:
         super().__init__(*args, **kwargs)
-        self._schedulers = None if schedulers is None else {
+        self._schedulers = None if schedulers is None else {  # yapf: disable
             name: todd.schedulers.SCHEDULERS.build(cfg)
             for name, cfg in schedulers.items()
         }
@@ -56,14 +70,28 @@ class SchedulersMixin(BaseDetector):
     def forward_train(
         self,
         img: torch.Tensor,
-        img_metas: List[dict],
-        *args,
+        img_metas: List[Dict[str, Any]],
+        gt_bboxes: torch.Tensor,
+        gt_labels: torch.Tensor,
+        gt_bboxes_ignore: Optional[torch.Tensor] = None,
+        gt_masks: Optional[torch.Tensor] = None,
         **kwargs,
     ) -> Dict[str, Any]:
-        losses: Dict[str, Any] = super().forward_train(img, img_metas, *args, **kwargs)
+        losses = super().forward_train(
+            img,
+            img_metas,
+            gt_bboxes,
+            gt_labels,
+            gt_bboxes_ignore,
+            gt_masks,
+            **kwargs,
+        )
         if self._schedulers is not None:
-            losses.update({
-                name: todd.utils.CollectionTensor.apply(losses[name], lambda l: l * scheduler)
+            losses.update({  # yapf: disable
+                name: todd.utils.CollectionTensor.apply(
+                    losses[name],
+                    lambda l: l * scheduler,
+                )
                 for name, scheduler in self._schedulers.items()
             })
         return losses
@@ -98,14 +126,17 @@ class CrossStageDetector(TwoStageDetector):
         )
 
         roi_losses = self.roi_head.forward_train(
-            x, img_metas, proposal_list,
-            gt_bboxes, gt_labels,
-            gt_bboxes_ignore, gt_masks,
+            x,
+            img_metas,
+            proposal_list,
+            gt_bboxes,
+            gt_labels,
+            gt_bboxes_ignore,
+            gt_masks,
             **kwargs,
         )
 
         return {**rpn_losses, **roi_losses}
-
 
     def simple_test(
         self,
@@ -115,21 +146,27 @@ class CrossStageDetector(TwoStageDetector):
     ) -> list:
         feat = self.extract_feat(img)
         results_list = self.rpn_head.simple_test(
-            feat, img_metas, rescale=rescale)
-        bbox_results = [
+            feat,
+            img_metas,
+            rescale=rescale,
+        )
+        bbox_results = [  # yapf: disable
             bbox2result(det_bboxes, det_labels, self.rpn_head.num_classes)
             for det_bboxes, det_labels in results_list
         ]
         return bbox_results
 
     def aug_test(self, *args, **kwargs) -> NoReturn:
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class SingleTeacherDistiller(todd.distillers.SingleTeacherDistiller):
 
     def __init__(self, *args, teacher: dict, **kwargs):
-        teacher_model = todd.utils.ModelLoader.load_mmlab_models(DETECTORS, **teacher)
+        teacher_model = todd.utils.ModelLoader.load_mmlab_models(
+            DETECTORS,
+            **teacher,
+        )
         super().__init__(*args, teacher=teacher_model, **kwargs)
 
 
@@ -150,7 +187,13 @@ class CrossStageHEAD(CacheImgsMixin, SchedulersMixin, CrossStageDetector):
         **kwargs,
     ) -> Dict[str, Any]:
         losses = super().forward_train(
-            img, img_metas, gt_bboxes, gt_labels, gt_bboxes_ignore, gt_masks, **kwargs,
+            img,
+            img_metas,
+            gt_bboxes,
+            gt_labels,
+            gt_bboxes_ignore,
+            gt_masks,
+            **kwargs,
         )
         with torch.no_grad():
             teacher: TwoStageDetector = self.distiller.teacher

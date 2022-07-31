@@ -1,11 +1,11 @@
 import os
 import os.path as osp
 
-from mmcv import Config
-from mmcv.runner import TextLoggerHook
-from mmcv.cnn import NORM_LAYERS
-from todd.base import get_logger
 import torch
+from mmcv import Config
+from mmcv.cnn import NORM_LAYERS
+from mmcv.runner import TextLoggerHook
+from todd.base import get_logger
 
 
 def odps_init():
@@ -43,7 +43,11 @@ def debug_init(debug: bool, cfg: Config):
         if 'proposal_file' in cfg.data.val:
             data_train.proposal_file = cfg.data.val.proposal_file
     if has_debug_flag(4):
-        NORM_LAYERS.register_module('SyncBN', force=True, module=NORM_LAYERS.get('BN'))
+        NORM_LAYERS.register_module(
+            'SyncBN',
+            force=True,
+            module=NORM_LAYERS.get('BN'),
+        )
         cfg.fp16 = None
     if has_debug_flag(5):
         cfg.data.samples_per_gpu = 2
@@ -53,6 +57,7 @@ def debug_init(debug: bool, cfg: Config):
 
 def has_debug_flag(level: int) -> bool:
     """Parse debug flags.
+
     Levels:
         0: custom flag
         1: use val dataset as train dataset

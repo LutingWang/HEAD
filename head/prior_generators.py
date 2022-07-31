@@ -1,15 +1,10 @@
-import contextlib
-from typing import Generator, List, Protocol, Tuple, Union
+from typing import List, Protocol, Tuple, Union
+
 import einops
 import torch
-
-from mmdet.core.anchor import (
-    AnchorGenerator as _AnchorGenerator,
-    MlvlPointGenerator as _MlvlPointGenerator,
-)
+from mmdet.core.anchor import AnchorGenerator as _AnchorGenerator
+from mmdet.core.anchor import MlvlPointGenerator as _MlvlPointGenerator
 from mmdet.core.anchor.builder import PRIOR_GENERATORS
-
-import todd
 
 
 class PriorGeneratorProto(Protocol):
@@ -39,17 +34,33 @@ class PosMixin(PriorGeneratorProto):
         device: Union[str, torch.device] = 'cuda',
     ) -> torch.Tensor:
         priors = super().single_level_grid_priors(
-            featmap_size, level_idx, dtype, device,
+            featmap_size,
+            level_idx,
+            dtype,
+            device,
         )
         if not self.with_pos:
             return priors
         h, w = featmap_size
         a = self.num_base_priors[level_idx]
-        pos = torch.zeros((h, w, a, 4), dtype=priors.dtype, device=priors.device)
+        pos = torch.zeros(
+            (h, w, a, 4),
+            dtype=priors.dtype,
+            device=priors.device,
+        )
         pos[..., 0] = level_idx
-        pos[..., 1] = einops.rearrange(torch.arange(h, dtype=priors.dtype, device=priors.device), 'h -> h 1 1')
-        pos[..., 2] = einops.rearrange(torch.arange(w, dtype=priors.dtype, device=priors.device), 'w -> 1 w 1')
-        pos[..., 3] = einops.rearrange(torch.arange(a, dtype=priors.dtype, device=priors.device), 'a -> 1 1 a')
+        pos[..., 1] = einops.rearrange(
+            torch.arange(h, dtype=priors.dtype, device=priors.device),
+            'h -> h 1 1',
+        )
+        pos[..., 2] = einops.rearrange(
+            torch.arange(w, dtype=priors.dtype, device=priors.device),
+            'w -> 1 w 1',
+        )
+        pos[..., 3] = einops.rearrange(
+            torch.arange(a, dtype=priors.dtype, device=priors.device),
+            'a -> 1 1 a',
+        )
         pos = einops.rearrange(pos, 'h w a n -> (h w a) n')
         return torch.cat((priors, pos), dim=-1)
 

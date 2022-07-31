@@ -1,7 +1,5 @@
-from typing import Any, List
-
-from mmdet.datasets import DATASETS, CustomDataset, CocoDataset as _CocoDataset
-import torch
+from mmdet.datasets import CocoDataset as _CocoDataset
+from mmdet.datasets import CustomDataset
 
 from head.utils import has_debug_flag
 
@@ -37,11 +35,15 @@ class CocoDataset(DebugMixin, _CocoDataset):
     def load_annotations(self, *args, **kwargs):
         data_infos = super().load_annotations(*args, **kwargs)
         if has_debug_flag(2):
-            self.coco.dataset['images'] = self.coco.dataset['images'][:len(self)]
+            self.coco.dataset['images'] = \
+                self.coco.dataset['images'][:len(self)]
             self.img_ids = [img['id'] for img in self.coco.dataset['images']]
             self.coco.dataset['annotations'] = [
                 ann for ann in self.coco.dataset['annotations']
                 if ann['image_id'] in self.img_ids
             ]
-            self.coco.imgs = {img['id']: img for img in self.coco.dataset['images']}
+            self.coco.imgs = {
+                img['id']: img
+                for img in self.coco.dataset['images']
+            }
         return data_infos
