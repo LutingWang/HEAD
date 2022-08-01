@@ -1,5 +1,7 @@
 # HEAD
 
+[![wakatime](https://wakatime.com/badge/github/LutingWang/HEAD.svg)](https://wakatime.com/badge/github/LutingWang/HEAD)
+
 HEtero-Assists Distillation for Heterogeneous Object Detectors
 
 ## Preparation
