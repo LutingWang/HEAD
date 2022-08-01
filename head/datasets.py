@@ -1,3 +1,4 @@
+from mmdet.datasets import DATASETS
 from mmdet.datasets import CocoDataset as _CocoDataset
 from mmdet.datasets import CustomDataset
 
@@ -29,7 +30,7 @@ class DebugMixin(CustomDataset):
         return super().evaluate(*args, **kwargs)
 
 
-# @DATASETS.register_module(force=True)
+@DATASETS.register_module(force=True)
 class CocoDataset(DebugMixin, _CocoDataset):
 
     def load_annotations(self, *args, **kwargs):

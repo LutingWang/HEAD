@@ -34,13 +34,13 @@ conda activate HEAD
 ```
 
 Install `MMDetection` following [official instructions](https://github.com/open-mmlab/mmdetection/blob/master/docs/en/get_started.md/#Installation).
-Specifically, the following specifications are recommended
+For example
 
-```
-torch==1.9.1
-torchvision==0.10.0
-mmcv_full==1.4.6
-mmdet==2.20
+```bash
+pip install torch==1.9.1+cu102 torchvision==0.10.1+cu102 -f https://download.pytorch.org/whl/torch_stable.html
+pip install -U openmim
+mim install mmcv_full==1.4.6
+pip install mmdet==2.20
 ```
 
 Install `todd`
