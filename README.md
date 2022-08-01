@@ -1,5 +1,6 @@
 # HEAD
 
+[![lint](https://github.com/LutingWang/HEAD/actions/workflows/lint.yaml/badge.svg)](https://github.com/LutingWang/HEAD/actions/workflows/lint.yaml)
 [![wakatime](https://wakatime.com/badge/github/LutingWang/HEAD.svg)](https://wakatime.com/badge/github/LutingWang/HEAD)
 
 HEtero-Assists Distillation for Heterogeneous Object Detectors
@@ -22,6 +23,28 @@ mkdir -p ~/.cache/torch/hub/checkpoints
 ln -s ~/.cache/torch/hub/checkpoints pretrained/torchvision
 wget -P pretrained/torchvision https://download.pytorch.org/models/resnet18-f37072fd.pth
 wget -P pretrained/torchvision https://download.pytorch.org/models/resnet50-0676ba61.pth
+```
+
+The directory tree should be like this
+
+```
+HEAD
+├── data
+│   └── coco -> ~/Developer/datasets/coco
+│       ├── annotations
+│       │   ├── instances_train2017.json
+│       │   └── instances_val2017.json
+│       ├── train2017
+│       │   └── ...
+│       └── val2017
+│           └── ...
+├── pretrained
+│   ├── mmdetection
+│   │   └── faster_rcnn_r50_fpn_mstrain_3x_coco_20210524_110822-e10bd31c.pth
+│   └── torchvision -> ~/.cache/torch/hub/checkpoints
+│       ├── resnet18-f37072fd.pth
+│       └── resnet50-0676ba61.pth
+└── ...
 ```
 
 ## Installation
