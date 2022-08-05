@@ -78,7 +78,7 @@ def parse_args():
         help='job launcher'
     )
     parser.add_argument('--local_rank', type=int, default=0)
-    parser.add_argument('--no-log-file', action='store_true')
+    parser.add_argument('--odps', action='store_true')
     parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
     if 'LOCAL_RANK' not in os.environ:
@@ -89,6 +89,9 @@ def parse_args():
 
 def main():
     args = parse_args()
+
+    if args.odps:
+        odps_init()
 
     cfg = Config.fromfile(args.config)
     if args.cfg_options is not None:
@@ -140,7 +143,7 @@ def main():
     cfg.dump(osp.join(cfg.work_dir, osp.basename(args.config)))
     # init the logger before other steps
     timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
-    log_file = None if args.no_log_file else osp.join(
+    log_file = None if args.odps else osp.join(
         cfg.work_dir, f'{timestamp}.log'
     )
     logger = get_root_logger(log_file=log_file, log_level=cfg.log_level)
@@ -205,5 +208,4 @@ def main():
 
 
 if __name__ == '__main__':
-    odps_init()
     main()

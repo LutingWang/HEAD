@@ -110,7 +110,7 @@ model = dict(
                 fields=['rcnn_bbox_adapted', 'teacher_rcnn_bbox'],
                 weight=dict(
                     type='WarmupScheduler',
-                    value=2.0,
+                    value=3.0,
                     iter_=2000,
                 ),
             ),

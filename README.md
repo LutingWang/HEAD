@@ -56,8 +56,8 @@ conda create -n HEAD python=3.8
 conda activate HEAD
 ```
 
-Install `MMDetection` following [official instructions](https://github.com/open-mmlab/mmdetection/blob/master/docs/en/get_started.md/#Installation).
-For example
+Install `MMDetection` following the [official instructions](https://github.com/open-mmlab/mmdetection/blob/master/docs/en/get_started.md/#Installation).
+For example,
 
 ```bash
 pip install torch==1.9.1+cu102 torchvision==0.10.1+cu102 -f https://download.pytorch.org/whl/torch_stable.html
@@ -75,7 +75,13 @@ pip install todd_ai==0.1.6
 ## train
 
 ```bash
-python tools/train.py configs/HEAD/head_retina_faster_r18_fpn_mstrain_1x_coco.py --work-dir work_dirs/debug
+python tools/train.py configs/HEAD/head_retina_faster_r18_fpn_mstrain_1x_coco.py --work-dir work_dirs/debug --seed 3407
+```
+
+For distributed training
+
+```bash
+bash tools/dist_train.sh configs/HEAD/head_retina_faster_r18_fpn_mstrain_1x_coco.py 8 --work-dir work_dirs/debug --seed 3407
 ```
 
 # Developer Guides

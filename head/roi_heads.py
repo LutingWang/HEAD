@@ -58,6 +58,9 @@ class StandardRoIHeadWithBBoxIDs(StandardRoIHead):
         self.bboxes_ids = bboxes_ids
         return sampling_results
 
+    def init_weights(self) -> None:
+        assert self.is_init
+
     def forward_train(
         self,
         x: torch.Tensor,
