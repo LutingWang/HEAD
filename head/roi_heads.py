@@ -59,7 +59,10 @@ class StandardRoIHeadWithBBoxIDs(StandardRoIHead):
         return sampling_results
 
     def init_weights(self) -> None:
-        assert self.is_init
+        # It is fine to have this function called after initialization, since
+        # `todd.distiller` may transfer weights.
+        if not self.is_init:
+            super().init_weights()
 
     def forward_train(
         self,

@@ -168,10 +168,6 @@ class SingleTeacherDistiller(todd.distillers.SingleTeacherDistiller):
             **teacher,
         )
         super().__init__(*args, teacher=teacher_model, **kwargs)
-        self.init_cfg = [
-            dict(type='Normal', layer='Conv2d', std=0.01),
-            dict(type='Kaiming', layer='Linear'),
-        ]
 
 
 @DETECTORS.register_module()

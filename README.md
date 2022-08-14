@@ -84,6 +84,24 @@ For distributed training
 bash tools/dist_train.sh configs/HEAD/head_retina_faster_r18_fpn_mstrain_1x_coco.py 8 --work-dir work_dirs/debug --seed 3407
 ```
 
+## Results
+
+All logs and checkpoints can be found in the [Google Drive](https://drive.google.com/drive/folders/1cs9WWyBaZmstsKlwnMv7PE9ky-i98WUh?usp=sharing).
+
+### HEAD
+
+Teachers and students are all trained with multi-scale, for 3x and 1x scheduler respectively.
+
+| Student       | Teacher           | Assist        | AKD           | CKD           | mAP   | Config                                                                                                                |
+| :-:           | :-:               | :-:           | :-:           | :-:           | :-:   | -                                                                                                                     |
+| R18 RetinaNet | R50 Faster R-CNN  | $\checkmark$  |               |               | 33.4  | [retina_faster_r18_fpn_mstrain_1x_coco](configs/assist/retina_faster_r18_fpn_mstrain_1x_coco.py)                      |
+| R18 RetinaNet | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  |               | 35.7  | [head_dag_retina_faster_r18_fpn_mstrain_1x_coco](configs/HEAD_dag/head_dag_retina_faster_r18_fpn_mstrain_1x_coco.py)  |
+| R18 RetinaNet | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  | $\checkmark$  | 36.1  | [head_retina_faster_r18_fpn_mstrain_1x_coco](configs/HEAD/head_retina_faster_r18_fpn_mstrain_1x_coco.py)              |
+
+### TF-HEAD
+
+Coming soon...
+
 # Developer Guides
 
 ## Local Installation
