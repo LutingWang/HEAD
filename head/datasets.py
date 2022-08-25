@@ -2,25 +2,25 @@ from mmdet.datasets import DATASETS
 from mmdet.datasets import CocoDataset as _CocoDataset
 from mmdet.datasets import CustomDataset
 
-from head.utils import DebugEnum
+from head.utils import Debug
 
 
 class DebugMixin(CustomDataset):
 
     def __len__(self) -> int:
-        if DebugEnum.LESS_DATA.is_on:
+        if Debug.LESS_DATA:
             return 4
         return super().__len__()
 
     def load_annotations(self, *args, **kwargs):
         data_infos = super().load_annotations(*args, **kwargs)
-        if DebugEnum.LESS_DATA.is_on:
+        if Debug.LESS_DATA:
             data_infos = data_infos[:len(self)]
         return data_infos
 
     def load_proposals(self, *args, **kwargs):
         proposals = super().load_proposals(*args, **kwargs)
-        if DebugEnum.LESS_DATA.is_on:
+        if Debug.LESS_DATA:
             proposals = proposals[:len(self)]
         return proposals
 
@@ -35,7 +35,7 @@ class CocoDataset(DebugMixin, _CocoDataset):
 
     def load_annotations(self, *args, **kwargs):
         data_infos = super().load_annotations(*args, **kwargs)
-        if DebugEnum.LESS_DATA.is_on:
+        if Debug.LESS_DATA:
             self.coco.dataset['images'] = \
                 self.coco.dataset['images'][:len(self)]
             self.img_ids = [img['id'] for img in self.coco.dataset['images']]

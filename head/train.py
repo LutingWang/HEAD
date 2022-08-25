@@ -230,7 +230,7 @@ def train_detector(
 
     if cfg.resume_from:
         runner.resume(cfg.resume_from)
-        todd.base.init_iter(runner.iter)
     elif cfg.load_from:
         runner.load_checkpoint(cfg.load_from)
+    todd.base.init_iter(runner.iter)
     runner.run(data_loaders, cfg.workflow)

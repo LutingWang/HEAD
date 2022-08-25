@@ -9,8 +9,8 @@ import time
 import warnings
 
 import mmcv
+import todd
 import torch
-from mmcv import Config, DictAction
 from mmcv.runner import get_dist_info, init_dist
 from mmcv.utils import get_git_hash
 from mmdet import __version__
@@ -18,6 +18,7 @@ from mmdet.apis import init_random_seed, set_random_seed
 from mmdet.datasets import build_dataset
 from mmdet.models import build_detector
 from mmdet.utils import collect_env, get_root_logger
+from todd.base import Config, DictAction
 
 from head.train import train_detector
 from head.utils import debug_init, odps_init
@@ -62,14 +63,8 @@ def parse_args():
     )
     parser.add_argument(
         '--cfg-options',
-        nargs='+',
+        nargs='?',
         action=DictAction,
-        help='override some settings in the used config, the key-value pair '
-        'in xxx=yyy format will be merged into config file. If the value to '
-        'be overwritten is a list, it should be like key="[a,b]" or key=a,b '
-        'It also allows nested list/tuple values, e.g. key="[(a,b),(c,d)]" '
-        'Note that the quotation marks are necessary and that no white space '
-        'is allowed.'
     )
     parser.add_argument(
         '--launcher',
@@ -93,9 +88,10 @@ def main():
     if args.odps:
         odps_init()
 
-    cfg = Config.fromfile(args.config)
+    cfg = Config.load(args.config)
     if args.cfg_options is not None:
-        cfg.merge_from_dict(args.cfg_options)
+        for k, v in args.cfg_options.items():
+            todd.base.setattr_recur(cfg, k, v)
 
     debug_init(args.debug, cfg)
 
@@ -159,10 +155,10 @@ def main():
         'Environment info:\n' + dash_line + env_info + '\n' + dash_line
     )
     meta['env_info'] = env_info
-    meta['config'] = cfg.pretty_text
+    meta['config'] = cfg.dumps()
     # log some basic info
     logger.info(f'Distributed training: {distributed}')
-    logger.info(f'Config:\n{cfg.pretty_text}')
+    logger.info(f'Config:\n{cfg.dumps()}')
 
     # set random seeds
     seed = init_random_seed(args.seed)

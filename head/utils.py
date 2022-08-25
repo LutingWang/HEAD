@@ -1,4 +1,3 @@
-import enum
 import os
 import os.path as osp
 
@@ -6,34 +5,17 @@ import torch
 from mmcv import Config
 from mmcv.cnn import NORM_LAYERS
 from mmcv.runner import TextLoggerHook
-from todd.base import get_logger
+from todd.base import DebugMode, get_logger
 
 
-class _DebugEnum(enum.Enum):
-
-    @classmethod
-    def is_active(cls) -> bool:
-        return any(e.is_on for e in cls)
-
-    @property
-    def is_on(self) -> bool:
-        return any(map(os.getenv, ['DEBUG', 'DEBUG_' + self.name]))
-
-    def turn_on(self) -> None:
-        os.environ['DEBUG_' + self.name] = '1'
-
-    def turn_off(self) -> None:
-        os.environ['DEBUG_' + self.name] = ''
-
-
-class DebugEnum(_DebugEnum):
-    CUSTOM = enum.auto()
-    TRAIN_WITH_VAL_DATASET = enum.auto()
-    LESS_DATA = enum.auto()
-    LESS_BBOXES = enum.auto()
-    CPU = enum.auto()
-    SMALLER_BATCH_SIZE = enum.auto()
-    FREQUENT_EVAL = enum.auto()
+class Debug:
+    CUSTOM = DebugMode()
+    TRAIN_WITH_VAL_DATASET = DebugMode()
+    LESS_DATA = DebugMode()
+    LESS_BBOXES = DebugMode()
+    CPU = DebugMode()
+    SMALLER_BATCH_SIZE = DebugMode()
+    FREQUENT_EVAL = DebugMode()
 
 
 def odps_init():
@@ -57,22 +39,19 @@ def odps_init():
 def debug_init(debug: bool, cfg: Config):
     if torch.cuda.is_available():
         if debug:
-            DebugEnum.LESS_DATA.turn_on()
-        if DebugEnum.is_active():
-            assert not DebugEnum.CPU.is_on
-        else:
-            return
+            Debug.LESS_DATA = True
+        assert not Debug.CPU
     else:
-        DebugEnum.TRAIN_WITH_VAL_DATASET.turn_on()
-        DebugEnum.LESS_DATA.turn_on()
-        DebugEnum.LESS_BBOXES.turn_on()
-        DebugEnum.CPU.turn_on()
-        DebugEnum.SMALLER_BATCH_SIZE.turn_on()
-        DebugEnum.FREQUENT_EVAL.turn_on()
+        Debug.TRAIN_WITH_VAL_DATASET = True
+        Debug.LESS_DATA = True
+        Debug.LESS_BBOXES = True
+        Debug.CPU = True
+        Debug.SMALLER_BATCH_SIZE = True
+        Debug.FREQUENT_EVAL = True
 
     if (
-        DebugEnum.TRAIN_WITH_VAL_DATASET.is_on and 'data' in cfg
-        and 'train' in cfg.data and 'val' in cfg.data
+        Debug.TRAIN_WITH_VAL_DATASET and 'data' in cfg and 'train' in cfg.data
+        and 'val' in cfg.data
     ):
         data_train = cfg.data.train
         data_val = cfg.data.val
@@ -86,7 +65,7 @@ def debug_init(debug: bool, cfg: Config):
         }
         data_train.update(data_val)
 
-    if DebugEnum.CPU.is_on:
+    if Debug.CPU:
         cfg.fp16 = None
         NORM_LAYERS.register_module(
             'SyncBN',
@@ -94,8 +73,8 @@ def debug_init(debug: bool, cfg: Config):
             module=NORM_LAYERS.get('BN'),
         )
 
-    if DebugEnum.SMALLER_BATCH_SIZE.is_on and 'data' in cfg:
+    if Debug.SMALLER_BATCH_SIZE and 'data' in cfg:
         cfg.data.samples_per_gpu = 2
 
-    if DebugEnum.FREQUENT_EVAL.is_on and 'evaluation' in cfg:
+    if Debug.FREQUENT_EVAL and 'evaluation' in cfg:
         cfg.evaluation.interval = 1
