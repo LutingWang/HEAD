@@ -143,12 +143,13 @@ def train_detector(
 
     if 'runner' not in cfg:
         cfg.runner = {
-            'type': 'EpochBasedRunner', 'max_epochs': cfg.total_epochs
+            'type': 'EpochBasedRunner',
+            'max_epochs': cfg.total_epochs,
         }
         warnings.warn(
             'config is now expected to have a `runner` section, '
             'please set `runner` in your config.',
-            UserWarning
+            UserWarning,
         )
     else:
         if 'total_epochs' in cfg:

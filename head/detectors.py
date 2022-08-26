@@ -162,7 +162,8 @@ class CrossStageDetector(TwoStageDetector):
 
 class SingleTeacherDistiller(todd.distillers.SingleTeacherDistiller):
 
-    def __init__(self, *args, teacher: dict, **kwargs):
+    def __init__(self, *args, teacher: todd.base.Config, **kwargs):
+        teacher.config = todd.base.Config.load(teacher.config).model
         teacher_model = todd.base.load_open_mmlab_models(
             DETECTORS,
             **teacher,

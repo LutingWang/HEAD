@@ -34,7 +34,9 @@ class CacheAnchorsMixin(AnchorHead):
         **kwargs,
     ):
         anchor_list, valid_flag_list = super().get_anchors(
-            featmap_sizes, *args, **kwargs,
+            featmap_sizes,
+            *args,
+            **kwargs,
         )
         if self.cache_anchors:
             anchors: List[torch.Tensor] = anchor_list[0]

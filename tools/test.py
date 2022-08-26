@@ -287,7 +287,7 @@ def main():
                 'gpu_collect',
                 'save_best',
                 'rule',
-                'dynamic_intervals'
+                'dynamic_intervals',
             ]:
                 eval_kwargs.pop(key, None)
             eval_kwargs.update(dict(metric=args.eval, **kwargs))

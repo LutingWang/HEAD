@@ -114,10 +114,10 @@ pip install mmdet==2.20
 ```
 
 ```bash
+pip install commitizen
 pip install -U pre-commit
 pre-commit install
 pre-commit install -t commit-msg
-brew install commitizen
 ```
 
 ## TODO
