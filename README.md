@@ -14,6 +14,7 @@ Download `MMDetection` pretrained models to `pretrained/mmdetection`
 ```bash
 mkdir -p pretrained/mmdetection
 wget -P pretrained/mmdetection https://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_mstrain_3x_coco/faster_rcnn_r50_fpn_mstrain_3x_coco_20210524_110822-e10bd31c.pth
+wget -P pretrained/mmdetection https://download.openmmlab.com/mmdetection/v2.0/third_party/mobilenet_v2_batch256_imagenet-ff34753d.pth
 ```
 
 Download `torchvision` pretrained models to `pretrained/torchvision`

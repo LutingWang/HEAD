@@ -8,7 +8,7 @@ data = dict(
             2: dict(
                 img_scale=[(1333, 640), (1333, 800)],
                 multiscale_mode='range',
-            )
-        }
-    )
+            ),
+        },
+    ),
 )

@@ -1,12 +1,19 @@
 model = dict(
     backbone=dict(
-        _delete_=True,
         type='MobileNetV2',
         act_cfg=dict(type='LeakyReLU', negative_slope=0.1),
         init_cfg=dict(
             type='Pretrained',
-            checkpoint='open-mmlab://mmdet/mobilenet_v2',
+            checkpoint=(
+                'pretrained/mmdetection/'
+                'mobilenet_v2_batch256_imagenet-ff34753d.pth'
+            ),
         ),
     ),
-    neck=dict(in_channels=[24, 32, 96, 1280]),
+    neck=dict(
+        type='FPN',
+        in_channels=[24, 32, 96, 1280],
+        out_channels=256,
+        num_outs=5,
+    ),
 )

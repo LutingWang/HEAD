@@ -1,4 +1,3 @@
-# model settings
 model = dict(
     type='RetinaNet',
     neck=dict(
@@ -32,7 +31,6 @@ model = dict(
         ),
         loss_bbox=dict(type='L1Loss', loss_weight=1.0),
     ),
-    # model training and testing settings
     train_cfg=dict(
         assigner=dict(
             type='MaxIoUAssigner',
