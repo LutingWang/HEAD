@@ -1,5 +1,6 @@
 # http://mvap-data.oss-cn-zhangjiakou.aliyuncs.com/zhax/wangluting/wheels3/pytorch151/mmcv_full-1.4.4-cp36-cp36m-linux_x86_64.whl
 http://mvap-data.oss-cn-zhangjiakou.aliyuncs.com/zhax/wangluting/wheels3/pytorch180/mmcv_full-1.4.6-cp36-cp36m-linux_x86_64.whl
-mmdet==2.20
 
-todd_ai==0.2.3a4
+# todd_ai==0.2.3a4
+http://mvap-data.oss-cn-zhangjiakou.aliyuncs.com/zhax/wangluting/wheels3/todd_ai-0.2.3a4-py3-none-any.whl
+mmdet==2.20

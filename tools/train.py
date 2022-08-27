@@ -1,10 +1,9 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import sys; sys.path.insert(0, '')  # noqa: E702, isort: skip, yapf: disable
-
 import argparse
 import copy
 import os
 import os.path as osp
+import sys
 import time
 import warnings
 
@@ -20,8 +19,9 @@ from mmdet.models import build_detector
 from mmdet.utils import collect_env, get_root_logger
 from todd.base import Config, DictAction
 
-from head.train import train_detector
-from head.utils import debug_init, odps_init
+sys.path.insert(0, '')
+from head.train import train_detector  # noqa: E402
+from head.utils import debug_init, odps_init  # noqa: E402
 
 
 def parse_args():

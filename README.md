@@ -41,7 +41,8 @@ HEAD
 │           └── ...
 ├── pretrained
 │   ├── mmdetection
-│   │   └── faster_rcnn_r50_fpn_mstrain_3x_coco_20210524_110822-e10bd31c.pth
+│   │   ├── faster_rcnn_r50_fpn_mstrain_3x_coco_20210524_110822-e10bd31c.pth
+│   │   └── mobilenet_v2_batch256_imagenet-ff34753d.pth
 │   └── torchvision -> ~/.cache/torch/hub/checkpoints
 │       ├── resnet18-f37072fd.pth
 │       └── resnet50-0676ba61.pth
@@ -67,11 +68,13 @@ mim install mmcv_full==1.4.6
 pip install mmdet==2.20
 ```
 
-Install `todd`
+Install `todd`.
 
 ```bash
-pip install todd_ai==0.1.6
+pip install todd_ai==0.2.3a4 -i https://pypi.org/simple
 ```
+
+> Note that the `requirements.txt` is not intended for users. Please follow the above instructions.
 
 ## train
 
@@ -93,11 +96,12 @@ All logs and checkpoints can be found in the [Google Drive](https://drive.google
 
 Teachers and students are all trained with multi-scale, for 3x and 1x scheduler respectively.
 
-| Student       | Teacher           | Assist        | AKD           | CKD           | mAP   | Config                                                                                                                |
-| :-:           | :-:               | :-:           | :-:           | :-:           | :-:   | -                                                                                                                     |
-| R18 RetinaNet | R50 Faster R-CNN  | $\checkmark$  |               |               | 33.4  | [retina_faster_r18_fpn_mstrain_1x_coco](configs/assist/retina_faster_r18_fpn_mstrain_1x_coco.py)                      |
-| R18 RetinaNet | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  |               | 35.7  | [head_dag_retina_faster_r18_fpn_mstrain_1x_coco](configs/HEAD_dag/head_dag_retina_faster_r18_fpn_mstrain_1x_coco.py)  |
-| R18 RetinaNet | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  | $\checkmark$  | 36.1  | [head_retina_faster_r18_fpn_mstrain_1x_coco](configs/HEAD/head_retina_faster_r18_fpn_mstrain_1x_coco.py)              |
+| Student           | Teacher           | Assist        | AKD           | CKD           | mAP   | Config                                                                                                                |
+| :-:               | :-:               | :-:           | :-:           | :-:           | :-:   | -                                                                                                                     |
+| R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  |               |               | 33.4  | [retina_faster_r18_fpn_mstrain_1x_coco](configs/assist/retina_faster_r18_fpn_mstrain_1x_coco.py)                      |
+| R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  |               | 35.7  | [HEAD_dag_retina_faster_r18_fpn_mstrain_1x_coco](configs/HEAD_dag/HEAD_dag_retina_faster_r18_fpn_mstrain_1x_coco.py)  |
+| R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  | $\checkmark$  | 36.1  | [HEAD_retina_faster_r18_fpn_mstrain_1x_coco](configs/HEAD/HEAD_retina_faster_r18_fpn_mstrain_1x_coco.py)              |
+| MNv2 RetinaNet    | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  | $\checkmark$  | 33.1  | [HEAD_retina_faster_mnv2_fpn_mstrain_1x_coco](configs/HEAD/HEAD_retina_faster_mnv2_fpn_mstrain_1x_coco.py)            |
 
 ### TF-HEAD
 
