@@ -98,9 +98,11 @@ Teachers and students are all trained with multi-scale, for 3x and 1x scheduler 
 
 | Student           | Teacher           | Assist        | AKD           | CKD           | mAP   | Config                                                                                                                |
 | :-:               | :-:               | :-:           | :-:           | :-:           | :-:   | -                                                                                                                     |
+| R18 RetinaNet     |                   |               |               |               | 31.7  | refer to [mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/configs/retinanet/README.md)             |
 | R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  |               |               | 33.4  | [retina_faster_r18_fpn_mstrain_1x_coco](configs/assist/retina_faster_r18_fpn_mstrain_1x_coco.py)                      |
 | R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  |               | 35.7  | [HEAD_dag_retina_faster_r18_fpn_mstrain_1x_coco](configs/HEAD_dag/HEAD_dag_retina_faster_r18_fpn_mstrain_1x_coco.py)  |
 | R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  | $\checkmark$  | 36.1  | [HEAD_retina_faster_r18_fpn_mstrain_1x_coco](configs/HEAD/HEAD_retina_faster_r18_fpn_mstrain_1x_coco.py)              |
+| MNv2 RetinaNet    | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  |               | 32.2  | [HEAD_retina_faster_mnv2_fpn_mstrain_1x_coco](configs/HEAD/HEAD_retina_faster_mnv2_fpn_mstrain_1x_coco.py)            |
 | MNv2 RetinaNet    | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  | $\checkmark$  | 33.1  | [HEAD_retina_faster_mnv2_fpn_mstrain_1x_coco](configs/HEAD/HEAD_retina_faster_mnv2_fpn_mstrain_1x_coco.py)            |
 
 ### TF-HEAD
