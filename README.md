@@ -1,9 +1,15 @@
-# HEAD
+```
+    _/    _/  _/_/_/_/    _/_/    _/_/_/
+   _/    _/  _/        _/    _/  _/    _/
+  _/_/_/_/  _/_/_/    _/_/_/_/  _/    _/
+ _/    _/  _/        _/    _/  _/    _/
+_/    _/  _/_/_/_/  _/    _/  _/_/_/
+```
+
+HEtero-Assists Distillation for Heterogeneous Object Detectors
 
 [![lint](https://github.com/LutingWang/HEAD/actions/workflows/lint.yaml/badge.svg)](https://github.com/LutingWang/HEAD/actions/workflows/lint.yaml)
 [![wakatime](https://wakatime.com/badge/github/LutingWang/HEAD.svg)](https://wakatime.com/badge/github/LutingWang/HEAD)
-
-HEtero-Assists Distillation for Heterogeneous Object Detectors
 
 ## Preparation
 
@@ -96,14 +102,16 @@ All logs and checkpoints can be found in the [Google Drive](https://drive.google
 
 Teachers and students are all trained with multi-scale, for 3x and 1x scheduler respectively.
 
-| Student           | Teacher           | Assist        | AKD           | CKD           | mAP   | Config                                                                                                                |
-| :-:               | :-:               | :-:           | :-:           | :-:           | :-:   | -                                                                                                                     |
-| R18 RetinaNet     |                   |               |               |               | 31.7  | refer to [mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/configs/retinanet/README.md)             |
-| R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  |               |               | 33.4  | [retina_faster_r18_fpn_mstrain_1x_coco](configs/assist/retina_faster_r18_fpn_mstrain_1x_coco.py)                      |
-| R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  |               | 35.7  | [HEAD_dag_retina_faster_r18_fpn_mstrain_1x_coco](configs/HEAD_dag/HEAD_dag_retina_faster_r18_fpn_mstrain_1x_coco.py)  |
-| R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  | $\checkmark$  | 36.1  | [HEAD_retina_faster_r18_fpn_mstrain_1x_coco](configs/HEAD/HEAD_retina_faster_r18_fpn_mstrain_1x_coco.py)              |
-| MNv2 RetinaNet    | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  |               | 32.2  | [HEAD_retina_faster_mnv2_fpn_mstrain_1x_coco](configs/HEAD/HEAD_retina_faster_mnv2_fpn_mstrain_1x_coco.py)            |
-| MNv2 RetinaNet    | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  | $\checkmark$  | 33.1  | [HEAD_retina_faster_mnv2_fpn_mstrain_1x_coco](configs/HEAD/HEAD_retina_faster_mnv2_fpn_mstrain_1x_coco.py)            |
+| Student           | Teacher           | Assist        | AKD           | CKD           | mAP       | Config                                                                                                    |
+| :-:               | :-:               | :-:           | :-:           | :-:           | :-:       | -                                                                                                         |
+| R18 RetinaNet     |                   |               |               |               | $31.7$    | refer to [mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/configs/retinanet/README.md) |
+| R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  |               |               | $33.4$    | [retina_faster_r18](configs/assist/retina_faster_r18_fpn_mstrain_1x_coco.py)                              |
+| R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  |               | $35.7$    | [HEAD_dag_retina_faster_r18](configs/HEAD_dag/HEAD_dag_retina_faster_r18_fpn_mstrain_1x_coco.py)          |
+| R18 RetinaNet     | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  | $\checkmark$  | $36.1$    | [HEAD_retina_faster_r18](configs/HEAD/HEAD_retina_faster_r18_fpn_mstrain_1x_coco.py)                      |
+| MNv2 RetinaNet    |                   |               |               |               | $27.8$    | [retinanet_mnv2](configs/retinanet/retinanet_mnv2_fpn_mstrain_1x_coco.py)                                 |
+| MNv2 RetinaNet    | R50 Faster R-CNN  | $\checkmark$  |               |               | $28.9$    | [retina_faster_mnv2](configs/assist/retina_faster_mnv2_fpn_mstrain_1x_coco.py)                            |
+| MNv2 RetinaNet    | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  |               | $32.2$    | [HEAD_dag_retina_faster_mnv2](configs/HEAD_dag/HEAD_dag_retina_faster_mnv2_fpn_mstrain_1x_coco.py)        |
+| MNv2 RetinaNet    | R50 Faster R-CNN  | $\checkmark$  | $\checkmark$  | $\checkmark$  | $33.1$    | [HEAD_retina_faster_mnv2](configs/HEAD/HEAD_retina_faster_mnv2_fpn_mstrain_1x_coco.py)                    |
 
 ### TF-HEAD
 

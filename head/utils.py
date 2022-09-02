@@ -1,11 +1,9 @@
 import os
-import os.path as osp
 
 import torch
-from mmcv import Config
 from mmcv.cnn import NORM_LAYERS
 from mmcv.runner import TextLoggerHook
-from todd.base import DebugMode, get_logger
+from todd.base import Config, DebugMode, get_logger
 
 
 class Debug:
@@ -26,11 +24,11 @@ def odps_init():
         return
 
     TextLoggerHook._dump_log = _dump_log
-    if not osp.lexists('data'):
+    if not os.path.lexists('data'):
         os.symlink('/data/oss_bucket_0', 'data')
-    if not osp.lexists('pretrained'):
+    if not os.path.lexists('pretrained'):
         os.symlink('/data/oss_bucket_0/ckpts', 'pretrained')
-    if not osp.lexists('work_dirs'):
+    if not os.path.lexists('work_dirs'):
         os.symlink('/data/oss_bucket_0/work_dirs', 'work_dirs')
 
     logger.debug(f"ODPS initialization done with {os.listdir('.')}.")

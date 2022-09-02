@@ -10,7 +10,7 @@ import warnings
 import mmcv
 import todd
 import torch
-from mmcv.runner import get_dist_info, init_dist
+from mmcv.runner import init_dist
 from mmcv.utils import get_git_hash
 from mmdet import __version__
 from mmdet.apis import init_random_seed, set_random_seed
@@ -63,7 +63,7 @@ def parse_args():
     )
     parser.add_argument(
         '--cfg-options',
-        nargs='?',
+        nargs='*',
         action=DictAction,
     )
     parser.add_argument(
@@ -89,9 +89,10 @@ def main():
         odps_init()
 
     cfg = Config.load(args.config)
-    if args.cfg_options is not None:
-        for k, v in args.cfg_options.items():
-            todd.base.setattr_recur(cfg, k, v)
+    if len(args.cfg_options):
+        for cfg_options in args.cfg_options:
+            for k, v in cfg_options.items():
+                todd.base.setattr_recur(cfg, k, v)
 
     debug_init(args.debug, cfg)
 
@@ -131,7 +132,7 @@ def main():
         distributed = True
         init_dist(args.launcher, **cfg.dist_params)
         # re-set gpu_ids with distributed training mode
-        _, world_size = get_dist_info()
+        world_size = todd.base.get_world_size()
         cfg.gpu_ids = range(world_size)
 
     # create work_dir
