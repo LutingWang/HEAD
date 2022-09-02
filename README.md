@@ -77,7 +77,7 @@ pip install mmdet==2.20
 Install `todd`.
 
 ```bash
-pip install todd_ai==0.2.3a4 -i https://pypi.org/simple
+pip install todd_ai==0.2.3a9 -i https://pypi.org/simple
 ```
 
 > Note that the `requirements.txt` is not intended for users. Please follow the above instructions.
