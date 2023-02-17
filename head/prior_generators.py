@@ -33,7 +33,7 @@ class PosMixin(PriorGeneratorProto):
         dtype: torch.dtype = torch.float32,
         device: Union[str, torch.device] = 'cuda',
     ) -> torch.Tensor:
-        priors = super().single_level_grid_priors(
+        priors = super().single_level_grid_priors(  # type: ignore[safe-super]
             featmap_size,
             level_idx,
             dtype,

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 import torch
 from mmdet.core import BaseAssigner
@@ -19,7 +19,7 @@ class StandardRoIHeadWithBBoxIDs(StandardRoIHead):
         proposal_list: List[torch.Tensor],
         gt_bboxes: List[torch.Tensor],
         gt_labels: List[torch.Tensor],
-        gt_bboxes_ignore: List[Optional[torch.Tensor]],
+        gt_bboxes_ignore: Sequence[Optional[torch.Tensor]],
     ):
         sampling_results: List[SamplingResultWithBBoxIDs] = []
         for i, (proposal, gt_bbox, gt_label, gt_bbox_ignore) in enumerate(
@@ -71,7 +71,7 @@ class StandardRoIHeadWithBBoxIDs(StandardRoIHead):
         proposal_list: List[torch.Tensor],
         gt_bboxes: List[torch.Tensor],
         gt_labels: List[torch.Tensor],
-        gt_bboxes_ignore: Optional[List[torch.Tensor]] = None,
+        gt_bboxes_ignore: Optional[Sequence[Optional[torch.Tensor]]] = None,
         gt_masks: Optional[List[Any]] = None,
         **kwargs,
     ):

@@ -37,5 +37,14 @@ files = [
     'head',
 ]
 
+[[tool.mypy.overrides]]
+module = [
+    'mmcv.*',
+    'mmdet.*',
+    'todd.*',
+]
+ignore_missing_imports = true
+
+
 [tool.commitizen]
 name = 'cz_conventional_commits'

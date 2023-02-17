@@ -43,6 +43,8 @@ repos:
     rev: v1.0.0
     hooks:
       - id: mypy
+        args:
+          - --no-incremental
         additional_dependencies:
           - todd_ai
   - repo: https://github.com/codespell-project/codespell
