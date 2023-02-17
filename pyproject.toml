@@ -1,14 +1,7 @@
 [project]
 name = 'HEAD'
-version = '0.1.0'
 description = 'HEtero-Assists Distillation for Heterogeneous Object Detectors'
 readme = 'README.md'
-requires-python = '>=3.8'
-classifiers = [
-    'Programming Language :: Python :: 3',
-    'License :: OSI Approved :: Apache Software License',
-    'Operating System :: OS Independent',
-]
 
 [project.license]
 file = 'LICENSE'
@@ -26,6 +19,7 @@ coalesce_brackets = true
 dedent_closing_brackets = true
 split_arguments_when_comma_terminated = true
 split_complex_comprehension = true
+split_before_arithmetic_operator = true
 
 [tool.isort]
 profile = 'hug'
@@ -34,64 +28,6 @@ src_paths = [
 ]
 line_length = 79
 multi_line_output = 3
-known_standard_library = [
-    'abc',
-    'argparse',
-    'base64',
-    'bisect',
-    'builtins',
-    'bz2',
-    'collections',
-    'contextlib',
-    'copy',
-    'csv',
-    'datetime',
-    'difflib',
-    'doctest',
-    'enum',
-    'functools',
-    'getpass',
-    'glob',
-    'hashlib',
-    'inspect',
-    'io',
-    'itertools',
-    'logging',
-    'math',
-    'numbers',
-    'operator',
-    'os',
-    'pathlib',
-    'pickle',
-    'queue',
-    'random',
-    're',
-    'reprlib',
-    'setuptools',
-    'socket',
-    'string',
-    'sys',
-    'tempfile',
-    'time',
-    'types',
-    'typing',
-    'warnings',
-    'webbrowser',
-    'zipfile',
-]
-known_third_party = [
-    'PIL',
-    'cv2',
-    'einops',
-    'matplotlib',
-    'mmcv',
-    'numpy',
-    'packaging',
-    'pytest',
-    'todd',
-    'torch',
-]
-known_first_party = 'head'
 
 [tool.pydocstyle]
 convention = 'google'
@@ -101,27 +37,5 @@ files = [
     'head',
 ]
 
-[[tool.mypy.overrides]]
-module = [
-    'cv2.*',
-    'einops.*',
-    'lmdb.*',
-    'mmcv.*',
-    'pandas.*',
-    'pkg_resources.*',
-    'PIL.*',
-    'setuptools.*',
-    'timm.*',
-    'todd.*',
-    'torchvision.*',
-]
-ignore_missing_imports = true
-
 [tool.commitizen]
 name = 'cz_conventional_commits'
-version = "0.1.6"
-tag_format = 'v$version'
-version_files = [
-    'pyproject.toml:^version',
-    'docs/source/conf.py:^release',
-]

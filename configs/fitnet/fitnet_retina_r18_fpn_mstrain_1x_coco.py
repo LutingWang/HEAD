@@ -1,5 +1,5 @@
 _base_ = [
-    '../_base_/models/head_retina_faster.py',
+    '../_base_/models/fitnet_retina.py',
     '../_base_/models/r18_fpn.py',
     '../_base_/datasets/coco_detection_mstrain.py',
     '../_base_/schedules/schedule_1x.py',

@@ -5,10 +5,13 @@ import mmcv
 import todd
 import torch
 from mmdet.core import bbox2result, bbox2roi
-from mmdet.models import BaseDetector
-from mmdet.models.builder import DETECTORS
-from mmdet.models.detectors.two_stage import TwoStageDetector
-from mmdet.models.roi_heads import StandardRoIHead
+from mmdet.models import (
+    DETECTORS,
+    BaseDetector,
+    SingleStageDetector,
+    StandardRoIHead,
+    TwoStageDetector,
+)
 from todd.base.iters import inc_iter
 
 from .dense_heads import RPNMixin
@@ -90,7 +93,7 @@ class SchedulersMixin(BaseDetector):
             losses.update({  # yapf: disable
                 name: todd.utils.CollectionTensor.apply(
                     losses[name],
-                    lambda l: l * scheduler,
+                    lambda loss: loss * scheduler,
                 )
                 for name, scheduler in self._schedulers.items()
             })
@@ -171,10 +174,46 @@ class SingleTeacherDistiller(todd.distillers.SingleTeacherDistiller):
         super().__init__(*args, teacher=teacher_model, **kwargs)
 
 
+class DistillerMixin(BaseDetector):
+    distiller: SingleTeacherDistiller
+
+    def forward_test(self, *args, **kwargs) -> List[Any]:
+        results = super().forward_test(*args, **kwargs)
+        self.distiller.reset()
+        return results
+
+
 @DETECTORS.register_module()
 @SingleTeacherDistiller.wrap()
-class CrossStageHEAD(CacheImgsMixin, SchedulersMixin, CrossStageDetector):
-    distiller: SingleTeacherDistiller
+class SingleTeacherSingleStageDistiller(SingleStageDetector):
+
+    def forward_train(self, *args, **kwargs) -> Dict[str, Any]:
+        with torch.no_grad():
+            teacher: TwoStageDetector = self.distiller.teacher
+            _ = teacher.forward_train(*args, **kwargs)
+        losses = super().forward_train(*args, **kwargs)
+
+        self.distiller.track_tensors()
+        kd_losses = self.distiller.distill()
+        self.distiller.reset()
+        inc_iter()
+
+        # mmdet does not support tuple of losses
+        for k, v in kd_losses.items():
+            if isinstance(v, tuple):
+                kd_losses[k] = list(v)
+
+        return {**losses, **kd_losses}
+
+
+@DETECTORS.register_module()
+@SingleTeacherDistiller.wrap()
+class CrossStageHEAD(
+    CacheImgsMixin,
+    SchedulersMixin,
+    DistillerMixin,
+    CrossStageDetector,
+):
     roi_head: StandardRoIHeadWithBBoxIDs
 
     def forward_train(
@@ -215,8 +254,3 @@ class CrossStageHEAD(CacheImgsMixin, SchedulersMixin, CrossStageDetector):
         inc_iter()
 
         return {**losses, **kd_losses}
-
-    def forward_test(self, *args, **kwargs) -> List[Any]:
-        results = super().forward_test(*args, **kwargs)
-        self.distiller.reset()
-        return results
