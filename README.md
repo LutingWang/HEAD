@@ -86,7 +86,7 @@ pip install todd_ai==0.2.3a9 -i https://pypi.org/simple
 
 > Note that the `requirements.txt` is not intended for users. Please follow the above instructions.
 
-## train
+## Training
 
 ```bash
 python tools/train.py configs/head/head_retina_faster_r18_fpn_mstrain_1x_coco.py --work-dir work_dirs/debug --seed 3407
@@ -110,7 +110,7 @@ All logs and checkpoints can be found in the [Google Drive](https://drive.google
 
 ### HEAD
 
-Teachers and students are all trained with multi-scale, for 3x and 1x scheduler respectively.
+Teachers and students are all trained with multi-scale, for 3x and 1x schedulers respectively.
 
 | Student           | Teacher           | Assist        | AKD           | CKD           | mAP       | Config                                                                                                    |
 | :-:               | :-:               | :-:           | :-:           | :-:           | :-:       | -                                                                                                         |
